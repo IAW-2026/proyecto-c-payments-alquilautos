@@ -1,8 +1,32 @@
 import { NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
 import db from "@/lib/db";
 
 export async function GET() {
   try {
+    // 1. Validamos sesión con Clerk
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+    }
+
+    // 2. Extraemos email y rol de Public Metadata
+    const email = user.primaryEmailAddress?.emailAddress?.toLowerCase();
+    const role = user.publicMetadata?.role;
+
+    // 3. Leemos whitelist de emails autorizados (con soporte para el prefijo público del frontend)
+    const adminEmailsEnv = process.env.NEXT_PUBLIC_ADMIN_EMAILS || process.env.ADMIN_EMAILS || "";
+    const adminEmails = adminEmailsEnv
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+
+    // 4. Verificamos autorización (por rol 'admin' o si está en la whitelist de emails)
+    const isAuthorized = role === "admin" || (email && adminEmails.includes(email));
+
+    if (!isAuthorized) {
+      return NextResponse.json({ error: "No autorizado para ver este panel" }, { status: 403 });
+    }
     // Obtenemos todos los pagos con su historial ordenado por fecha
     const pagos = await db.pago.findMany({
       include: {

@@ -17,8 +17,8 @@ export default function CheckoutPage() {
       await fetch("/api/pago", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          id_reserva: id_reserva, 
+        body: JSON.stringify({
+          id_reserva: id_reserva,
           monto_pagar: 150,
           id_alquilador: 1,
           id_propietario: 1
@@ -52,11 +52,11 @@ export default function CheckoutPage() {
     <main className="checkout-layout">
       <Header />
 
-      <div style={{ 
-        display: "flex", 
-        flexDirection: "column", 
-        alignItems: "center", 
-        justifyContent: "center", 
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
         padding: "5rem 2rem",
         gap: "2rem"
       }}>
@@ -67,9 +67,9 @@ export default function CheckoutPage() {
         <p style={{ color: "var(--text-secondary)", textAlign: "center", maxWidth: "400px" }}>
           Al hacer clic en el botón, serás redirigido a la pasarela segura de <strong>Mercado Pago</strong> para completar tu transacción.
         </p>
-        
-        <button 
-          className="btn-primary" 
+
+        <button
+          className="btn-primary"
           style={{ maxWidth: "300px" }}
           onClick={handlePay}
           disabled={loading}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useUser, useClerk } from "@clerk/nextjs";
 import Header from "@/components/checkout/Header";
 import Footer from "@/components/checkout/Footer";
 import AdminHeader from "./components/AdminHeader";
@@ -9,13 +10,36 @@ import TransactionTable from "./components/TransactionTable";
 import { formatCurrency, Transaction, Stat } from "./constants";
 
 export default function AdminPanel() {
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [stats, setStats] = useState<Stat[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 1. Extraemos email y rol de Clerk
+  const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
+  const role = user?.publicMetadata?.role;
+
+  // 2. Obtenemos emails permitidos de la whitelist pública
+  const adminEmailsEnv = process.env.NEXT_PUBLIC_ADMIN_EMAILS || "";
+  const adminEmails = adminEmailsEnv
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+
+  // 3. Verificamos si tiene acceso por rol o whitelist de emails
+  const isAuthorized = role === "admin" || (email && adminEmails.includes(email));
+
   useEffect(() => {
+    // 4. Regla de Hooks: Declarar todos los hooks primero.
+    // Solo iniciamos el fetch si Clerk cargó y el usuario está autenticado y autorizado.
+    if (!isLoaded || !isSignedIn || !isAuthorized) {
+      return;
+    }
+
     async function fetchData() {
       try {
         const response = await fetch("/api/admin/transactions");
@@ -40,7 +64,56 @@ export default function AdminPanel() {
     }
 
     fetchData();
-  }, []);
+  }, [isLoaded, isSignedIn, isAuthorized]);
+
+  // --- RETORNOS TEMPRANOS DE RENDER (colocados al final de los hooks) ---
+
+  // 5. Pantalla de carga mientras Clerk inicializa
+  if (!isLoaded) {
+    return (
+      <div className="admin-loading-screen">
+        <div className="admin-loading-container">
+          <div className="admin-loading-spinner" />
+          <span>Verificando credenciales...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // 6. Pantalla de Acceso Denegado si no es administrador (Diseño Claro Integrado, sin nota de desarrollo)
+  if (!isSignedIn || !isAuthorized) {
+    return (
+      <div className="admin-denied-layout">
+        <Header />
+        <main className="admin-denied-main">
+          <div className="admin-denied-card">
+            <div className="admin-denied-icon-container">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+
+            <h2 className="admin-denied-title">Acceso Restringido</h2>
+
+            <p className="admin-denied-text">
+              Tu cuenta <strong>{email || "sin correo"}</strong> no tiene permisos de administrador en este panel de control.
+            </p>
+
+            <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", width: "100%" }}>
+              <button 
+                onClick={() => signOut({ redirectUrl: "/" })}
+                className="admin-denied-btn-logout"
+              >
+                Cerrar Sesión e Iniciar con otra cuenta
+              </button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   const filteredTransactions = transactions.filter((t) => {
     const search = searchTerm.toLowerCase();
@@ -60,44 +133,20 @@ export default function AdminPanel() {
   });
 
   return (
-    <div style={{ minHeight: "100dvh", display: "grid", gridTemplateRows: "auto 1fr auto", fontFamily: "var(--font)", background: "var(--bg)" }}>
-      <style>{`
-        thead th {
-          position: sticky;
-          top: 0;
-          z-index: 10;
-          background: #f8fafc;
-          border-bottom: 2px solid var(--border-light) !important;
-        }
-        .custom-scroll::-webkit-scrollbar {
-          width: 8px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 10px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-      `}</style>
-
+    <div className="admin-layout">
       <Header />
 
-      <div style={{ padding: "2.5rem 3rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-
+      <div className="admin-container">
         <AdminHeader
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
         />
 
         {loading ? (
-          <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>Cargando datos reales...</div>
+          <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>Cargando datos...</div>
         ) : (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.5rem" }}>
+            <div className="admin-stats-grid">
               {stats.map((stat) => (
                 <StatCard key={stat.label} stat={stat} />
               ))}

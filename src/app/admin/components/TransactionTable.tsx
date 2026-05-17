@@ -23,7 +23,7 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
       doc.setTextColor(100);
       doc.text(`Fecha de generación: ${new Date().toLocaleDateString()}`, 14, 30);
 
-      const tableColumn = ["ID", "Cliente", "Vehículo", "Fecha", "Monto", "Estado"];
+      const tableColumn = ["ID", "Reserva", "Propietario", "Fecha", "Monto", "Estado"];
       const tableRows = transactions.map(t => [
         t.id,
         t.cliente,

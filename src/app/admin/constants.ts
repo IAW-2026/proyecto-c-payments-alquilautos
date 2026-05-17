@@ -45,5 +45,5 @@ export const ESTADO_STYLES: Record<string, { bg: string; color: string }> = {
 };
 
 export function formatCurrency(n: number) {
-  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(n);
+  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 2 }).format(n);
 }

@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import { esES } from "@clerk/localizations";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,8 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body>{children}</body>
-    </html>
+    <ClerkProvider appearance={{ baseTheme: dark }} localization={esES}>
+      <html lang="es">
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
