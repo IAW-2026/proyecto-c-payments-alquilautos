@@ -25,7 +25,7 @@ export async function POST(request: Request) {
             title: `Reserva #${pago.id_reserva}`,
             quantity: 1,
             unit_price: pago.monto_pagar,
-            currency_id: "USD", // O "ARS" dependiendo de tu necesidad
+            currency_id: "ARS", // Configurado para pesos argentinos (Sandbox)
           },
         ],
         back_urls: {

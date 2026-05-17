@@ -19,7 +19,7 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           id_reserva: id_reserva, 
-          monto_pagar: 20000,
+          monto_pagar: 150,
           id_alquilador: 1,
           id_propietario: 1
         }),
