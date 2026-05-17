@@ -1,39 +1,32 @@
-// Configuración básica para conectar con PostgreSQL y generar el cliente
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
-// Modelo de Pago (Etapa 2)
 model Pago {
-  id                String      @id @default(uuid())
-  idReserva        String      // ID que viene de la Buyer App
-  monto             Float
-  estado            EstadoPago  @default(PENDIENTE)
-  metodoPago        String?     // Ej: "Mercado Pago"
-  externalPaymentId String?     // ID que nos da Mercado Pago
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  historial         HistorialEstado[]
+  id_pago             Int                   @id @default(autoincrement())
+  id_reserva          Int
+  id_alquilador       Int
+  id_propietario      Int
+  monto_pagar         Float
+  fecha               DateTime              @default(now())
+  HistorialEstadoPago HistorialEstadoPago[]
 }
 
-// Para llevar el registro de qué pasó con cada pago
-model HistorialEstado {
-  id        String     @id @default(uuid())
-  pagoId    String
-  pago      Pago       @relation(fields: [pagoId], references: [id])
-  estado    EstadoPago
-  fecha     DateTime   @default(now())
-  detalle   String?    // Ej: "Pago aprobado por el usuario"
+model HistorialEstadoPago {
+  id_historial_estado_pago Int      @id @default(autoincrement())
+  id_pago                  Int
+  estado                   String
+  fecha_hora               DateTime @default(now())
+  descripcion              String?
+  Pago                     Pago     @relation(fields: [id_pago], references: [id_pago])
 }
 
-enum EstadoPago {
-  PENDIENTE
-  APROBADO
-  RECHAZADO
-  CANCELADO
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
 }

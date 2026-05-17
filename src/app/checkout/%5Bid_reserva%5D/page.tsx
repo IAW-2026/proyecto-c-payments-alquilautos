@@ -9,36 +9,22 @@ export default function CheckoutPage() {
   const params = useParams();
   const id_reserva = params?.id_reserva;
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
 
   const handlePay = async () => {
     setLoading(true);
     try {
-      // 1. Nos aseguramos de que el pago existe (lógica de prueba para ti)
-      const initResponse = await fetch("/api/pago", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          id_reserva: id_reserva, 
-          monto_pagar: 20000,
-          id_alquilador: 1,
-          id_propietario: 1
-        }),
-      });
-
-      // 2. Creamos la preferencia de Mercado Pago
-      const prefResponse = await fetch("/api/pago/preference", {
-        method: "POST",
+      const response = await fetch("/api/pago/approve", {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_reserva }),
       });
 
-      const data = await prefResponse.json();
-
-      if (data.init_point) {
-        // Redirigir a Mercado Pago
-        window.location.href = data.init_point;
+      const data = await response.json();
+      if (data.success) {
+        setStatus("¡Pago Aprobado!");
       } else {
-        alert(data.error || "Error al generar link de pago");
+        alert(data.error || "Error al procesar el pago");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -65,17 +51,23 @@ export default function CheckoutPage() {
           Reserva ID: <strong>{id_reserva}</strong>
         </p>
         <p style={{ color: "var(--text-secondary)", textAlign: "center", maxWidth: "400px" }}>
-          Al hacer clic en el botón, serás redirigido a la pasarela segura de <strong>Mercado Pago</strong> para completar tu transacción.
+          Hacé clic en el botón de abajo para procesar tu pago de forma segura a través de nuestra pasarela.
         </p>
         
-        <button 
-          className="btn-primary" 
-          style={{ maxWidth: "300px" }}
-          onClick={handlePay}
-          disabled={loading}
-        >
-          {loading ? "Generando link..." : "Pagar con Mercado Pago"}
-        </button>
+        {status ? (
+          <div style={{ padding: "1rem 2rem", background: "#dcfce7", color: "#16a34a", borderRadius: "12px", fontWeight: 600 }}>
+            {status}
+          </div>
+        ) : (
+          <button 
+            className="btn-primary" 
+            style={{ maxWidth: "300px" }}
+            onClick={handlePay}
+            disabled={loading}
+          >
+            {loading ? "Procesando..." : "Pagar Ahora"}
+          </button>
+        )}
       </div>
 
       <Footer />

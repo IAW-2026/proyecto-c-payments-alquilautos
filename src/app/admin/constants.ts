@@ -39,6 +39,7 @@ export const MOCK_TRANSACCIONES: Transaction[] = [
 
 export const ESTADO_STYLES: Record<string, { bg: string; color: string }> = {
   Completado: { bg: "#dcfce7", color: "#16a34a" },
+  Aprobado: { bg: "#dcfce7", color: "#16a34a" },
   Pendiente: { bg: "#fef9c3", color: "#a16207" },
   Cancelado: { bg: "#fee2e2", color: "#dc2626" },
 };

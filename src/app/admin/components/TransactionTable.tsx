@@ -93,7 +93,7 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "700px" }}>
           <thead>
             <tr style={{ background: "#f8fafc" }}>
-              {["ID", "Cliente", "Vehículo", "Fecha", "Monto", "Estado"].map((h) => (
+              {["ID", "Reserva", "Propietario", "Fecha", "Monto", "Estado"].map((h) => (
                 <th key={h} style={{ padding: "0.75rem 1.75rem", textAlign: "left", fontSize: "0.72rem", fontWeight: 600, textTransform: "uppercase", color: "var(--text-muted)", borderBottom: "1px solid var(--border-light)" }}>{h}</th>
               ))}
             </tr>
