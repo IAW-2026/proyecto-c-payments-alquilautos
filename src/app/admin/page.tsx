@@ -6,13 +6,13 @@ import Footer from "@/components/checkout/Footer";
 import AdminHeader from "./components/AdminHeader";
 import StatCard from "./components/StatCard";
 import TransactionTable from "./components/TransactionTable";
-import { formatCurrency } from "./constants";
+import { formatCurrency, Transaction, Stat } from "./constants";
 
 export default function AdminPanel() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [stats, setStats] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [stats, setStats] = useState<Stat[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,15 +20,15 @@ export default function AdminPanel() {
       try {
         const response = await fetch("/api/admin/transactions");
         const data = await response.json();
-        
+
         if (data.transactions) {
           setTransactions(data.transactions);
-          
+
           // Formatear los stats para los StatCards
           const formattedStats = [
-            { label: "Ventas Totales", value: formatCurrency(data.stats.totalVentas), change: "+12.5%", isPositive: true },
-            { label: "Pagos Realizados", value: String(data.stats.cantidadPagos), change: "+3.2%", isPositive: true },
-            { label: "Tasa de Aprobación", value: `${((data.stats.pagosAprobados / (data.stats.cantidadPagos || 1)) * 100).toFixed(1)}%`, change: "-1.5%", isPositive: false },
+            { label: "Ventas Totales", value: formatCurrency(data.stats.totalVentas), sub: "+12.5%", color: "#16a34a" },
+            { label: "Pagos Realizados", value: String(data.stats.cantidadPagos), sub: "+3.2%", color: "#16a34a" },
+            { label: "Tasa de Aprobación", value: `${((data.stats.pagosAprobados / (data.stats.cantidadPagos || 1)) * 100).toFixed(1)}%`, sub: "-1.5%", color: "#dc2626" },
           ];
           setStats(formattedStats);
         }
@@ -44,7 +44,7 @@ export default function AdminPanel() {
 
   const filteredTransactions = transactions.filter((t) => {
     const search = searchTerm.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       t.id.toLowerCase().includes(search) ||
       t.cliente.toLowerCase().includes(search) ||
       t.estado.toLowerCase().includes(search);
@@ -87,10 +87,10 @@ export default function AdminPanel() {
       <Header />
 
       <div style={{ padding: "2.5rem 3rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-        
-        <AdminHeader 
-          searchTerm={searchTerm} 
-          onSearchChange={setSearchTerm} 
+
+        <AdminHeader
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
         />
 
         {loading ? (
@@ -103,7 +103,7 @@ export default function AdminPanel() {
               ))}
             </div>
 
-            <TransactionTable 
+            <TransactionTable
               transactions={filteredTransactions}
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}

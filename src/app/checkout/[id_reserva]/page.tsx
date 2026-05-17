@@ -14,7 +14,7 @@ export default function CheckoutPage() {
     setLoading(true);
     try {
       // 1. Nos aseguramos de que el pago existe (lógica de prueba para ti)
-      const initResponse = await fetch("/api/pago", {
+      await fetch("/api/pago", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
