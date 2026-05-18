@@ -741,3 +741,318 @@ thead th.sticky-header {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
 }
+
+/* ─── Admin Stat Card ─────────────────────────────────────── */
+.admin-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.admin-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.admin-stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.admin-stat-sub {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ─── Admin Header & Search ───────────────────────────────── */
+.admin-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.admin-header-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.admin-header-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.admin-search-wrapper {
+  position: relative;
+  width: 320px;
+}
+
+.admin-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  display: flex;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  outline: none;
+  color: var(--text-primary);
+  transition: border-color 0.15s;
+}
+
+.admin-search-input:focus {
+  border-color: var(--brand);
+}
+
+.admin-user-button-container {
+  display: flex;
+  align-items: center;
+  min-width: 28px;
+}
+
+/* ─── Admin Transactions Table ───────────────────────────── */
+.admin-table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.admin-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid var(--border-light);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-table-title {
+  font-weight: 600;
+}
+
+.admin-table-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.admin-date-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  background: #fff;
+}
+
+.admin-date-filter-input {
+  border: none;
+  outline: none;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.admin-date-clear-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.admin-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #1f2937;
+  color: #fff;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.admin-export-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-table-scroll-container {
+  max-height: 450px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.admin-table-head-row {
+  background: #f8fafc;
+}
+
+.admin-table-th {
+  padding: 0.75rem 1.75rem;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.admin-table-tr {
+  border-bottom: 1px solid var(--border-light);
+}
+
+.admin-table-td {
+  padding: 1rem 1.75rem;
+}
+
+.admin-table-td-id {
+  padding: 1rem 1.75rem;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.admin-client-info {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.admin-client-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #fff;
+}
+
+.admin-client-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.admin-table-td-vehicle {
+  padding: 1rem 1.75rem;
+  font-size: 0.875rem;
+}
+
+.admin-table-td-date {
+  padding: 1rem 1.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.admin-table-td-amount {
+  padding: 1rem 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.admin-table-td-status {
+  padding: 1rem 1.75rem;
+}
+
+.admin-status-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.admin-table-empty {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ─── Pantalla de Auth (Sign-In y Sign-Up) ──────────────── */
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top right, #1e1b4b, transparent), radial-gradient(circle at bottom left, #09090b, #000);
+  color: #fff;
+  padding: 2rem;
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 480px;
+  width: 100%;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.auth-tagline {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #6366f1;
+  text-transform: uppercase;
+}
+
+.auth-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(to right, #ffffff, #94a3b8);
+  WebkitBackgroundClip: text;
+  WebkitTextFillColor: transparent;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.auth-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.auth-card-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.1);
+}

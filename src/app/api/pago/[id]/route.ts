@@ -18,7 +18,7 @@ export async function GET(
 
     return NextResponse.json({
       id_pago: pago.id_pago,
-      estado: "Pendiente", // En este esquema simplificado, podrías buscar el último historial si quisieras el estado real
+      estado: "Pendiente",
       descripcion: "",
       fecha_hora: pago.fecha.toISOString(),
     });

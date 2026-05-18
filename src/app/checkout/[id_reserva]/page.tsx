@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   const handlePay = async () => {
     setLoading(true);
     try {
-      // 1. Nos aseguramos de que el pago existe (lógica de prueba para ti)
+      // 1. Aseguro que el pago existe (lógica de prueba para etapa 2)
       await fetch("/api/pago", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -25,7 +25,7 @@ export default function CheckoutPage() {
         }),
       });
 
-      // 2. Creamos la preferencia de Mercado Pago
+      // 2. Se crea la preferencia de Mercado Pago
       const prefResponse = await fetch("/api/pago/preference", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

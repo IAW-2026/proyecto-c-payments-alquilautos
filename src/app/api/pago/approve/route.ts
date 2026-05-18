@@ -15,7 +15,6 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "No se encontró un pago para esta reserva" }, { status: 404 });
     }
 
-    // En el nuevo esquema no hay campo 'estado' en Pago, sino que está en HistorialEstadoPago
     await db.historialEstadoPago.create({
       data: {
         id_pago: pago.id_pago,

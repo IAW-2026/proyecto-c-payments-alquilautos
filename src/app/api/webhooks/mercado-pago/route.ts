@@ -70,7 +70,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error en Webhook Mercado Pago:", error);
     // Aunque haya error interno, es buena práctica devolver 200 a MP para que no reintente infinitamente,
-    // o 500 si quieres que MP reintente la notificación más tarde.
+    // o 500 si se quiere que MP reintente la notificación más tarde.
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

@@ -7,7 +7,7 @@ import Footer from "@/components/checkout/Footer";
 import AdminHeader from "./components/AdminHeader";
 import StatCard from "./components/StatCard";
 import TransactionTable from "./components/TransactionTable";
-import { formatCurrency, Transaction, Stat } from "./constants";
+import { formatCurrency, Transaction } from "./constants";
 
 export default function AdminPanel() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -16,7 +16,7 @@ export default function AdminPanel() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [stats, setStats] = useState<Stat[]>([]);
+  const [stats, setStats] = useState({ totalVentas: 0, cantidadPagos: 0, pagosAprobados: 0 });
   const [loading, setLoading] = useState(true);
 
   // 1. Extraemos email y rol de Clerk
@@ -48,13 +48,9 @@ export default function AdminPanel() {
         if (data.transactions) {
           setTransactions(data.transactions);
 
-          // Formatear los stats para los StatCards
-          const formattedStats = [
-            { label: "Ventas Totales", value: formatCurrency(data.stats.totalVentas), sub: "+12.5%", color: "#16a34a" },
-            { label: "Pagos Realizados", value: String(data.stats.cantidadPagos), sub: "+3.2%", color: "#16a34a" },
-            { label: "Tasa de Aprobación", value: `${((data.stats.pagosAprobados / (data.stats.cantidadPagos || 1)) * 100).toFixed(1)}%`, sub: "-1.5%", color: "#dc2626" },
-          ];
-          setStats(formattedStats);
+          if (data.stats) {
+            setStats(data.stats);
+          }
         }
       } catch (error) {
         console.error("Error al cargar datos del admin:", error);
@@ -147,9 +143,21 @@ export default function AdminPanel() {
         ) : (
           <>
             <div className="admin-stats-grid">
-              {stats.map((stat) => (
-                <StatCard key={stat.label} stat={stat} />
-              ))}
+              <StatCard
+                label="Ventas Totales"
+                value={formatCurrency(stats.totalVentas)}
+                sub="Monto acumulado en pesos"
+              />
+              <StatCard
+                label="Pagos Realizados"
+                value={stats.cantidadPagos}
+                sub="Transacciones registradas"
+              />
+              <StatCard
+                label="Tasa de Aprobación"
+                value={`${((stats.pagosAprobados / (stats.cantidadPagos || 1)) * 100).toFixed(1)}%`}
+                sub={`${stats.pagosAprobados} de ${stats.cantidadPagos} aprobadas`}
+              />
             </div>
 
             <TransactionTable
