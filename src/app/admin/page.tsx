@@ -96,7 +96,7 @@ export default function AdminPanel() {
               Tu cuenta <strong>{email || "sin correo"}</strong> no tiene permisos de administrador en este panel de control.
             </p>
 
-            <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", width: "100%" }}>
+            <div className="admin-denied-actions">
               <button 
                 onClick={() => signOut({ redirectUrl: "/" })}
                 className="admin-denied-btn-logout"
@@ -139,7 +139,7 @@ export default function AdminPanel() {
         />
 
         {loading ? (
-          <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>Cargando datos...</div>
+          <div className="admin-loading-text">Cargando datos...</div>
         ) : (
           <>
             <div className="admin-stats-grid">
@@ -164,6 +164,7 @@ export default function AdminPanel() {
               transactions={filteredTransactions}
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
+              onDeleteTransaction={(id) => setTransactions((prev) => prev.filter((t) => t.id !== id))}
             />
           </>
         )}

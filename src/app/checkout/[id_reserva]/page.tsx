@@ -52,25 +52,17 @@ export default function CheckoutPage() {
     <main className="checkout-layout">
       <Header />
 
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "5rem 2rem",
-        gap: "2rem"
-      }}>
-        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2rem" }}>Finalizar Pago</h2>
-        <p style={{ color: "var(--text-secondary)", textAlign: "center", maxWidth: "400px" }}>
+      <div className="checkout-pay-container">
+        <h2 className="checkout-pay-title">Finalizar Pago</h2>
+        <p className="checkout-pay-desc">
           Reserva ID: <strong>{id_reserva}</strong>
         </p>
-        <p style={{ color: "var(--text-secondary)", textAlign: "center", maxWidth: "400px" }}>
+        <p className="checkout-pay-desc">
           Al hacer clic en el botón, serás redirigido a la pasarela segura de <strong>Mercado Pago</strong> para completar tu transacción.
         </p>
 
         <button
-          className="btn-primary"
-          style={{ maxWidth: "300px" }}
+          className="btn-primary checkout-pay-btn-wrapper"
           onClick={handlePay}
           disabled={loading}
         >

@@ -920,7 +920,7 @@ thead th.sticky-header {
 
 .admin-table-th {
   padding: 0.75rem 1.75rem;
-  text-align: left;
+  text-align: center;
   font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -934,17 +934,27 @@ thead th.sticky-header {
 
 .admin-table-td {
   padding: 1rem 1.75rem;
+  text-align: center;
+}
+
+.admin-table-td:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .admin-table-td-id {
   padding: 1rem 1.75rem;
   font-family: monospace;
   font-size: 0.8rem;
+  text-align: center;
 }
 
 .admin-client-info {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.625rem;
 }
 
@@ -967,22 +977,26 @@ thead th.sticky-header {
 .admin-table-td-vehicle {
   padding: 1rem 1.75rem;
   font-size: 0.875rem;
+  text-align: center;
 }
 
 .admin-table-td-date {
   padding: 1rem 1.75rem;
   font-size: 0.875rem;
   color: var(--text-secondary);
+  text-align: center;
 }
 
 .admin-table-td-amount {
   padding: 1rem 1.75rem;
   font-size: 0.875rem;
   font-weight: 600;
+  text-align: center;
 }
 
 .admin-table-td-status {
   padding: 1rem 1.75rem;
+  text-align: center;
 }
 
 .admin-status-badge {
@@ -996,6 +1010,46 @@ thead th.sticky-header {
   padding: 3rem;
   text-align: center;
   color: var(--text-muted);
+}
+
+.admin-export-excel-btn {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.admin-export-excel-btn:hover {
+  opacity: 0.9;
+  background: #15803d;
+}
+
+.admin-table-td-actions {
+  padding: 1rem 1.75rem;
+  text-align: center;
+}
+
+.admin-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: #fee2e2;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.admin-delete-btn:hover:not(:disabled) {
+  background: #fecaca;
+  transform: scale(1.1);
+}
+
+.admin-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ─── Pantalla de Auth (Sign-In y Sign-Up) ──────────────── */
@@ -1037,8 +1091,9 @@ thead th.sticky-header {
   font-weight: 800;
   letter-spacing: -0.02em;
   background: linear-gradient(to right, #ffffff, #94a3b8);
-  WebkitBackgroundClip: text;
-  WebkitTextFillColor: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-top: 0.5rem;
   margin-bottom: 0.25rem;
 }
@@ -1056,3 +1111,137 @@ thead th.sticky-header {
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.1);
 }
+
+/* --- Refactored Inline Styles --- */
+
+.checkout-pay-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  gap: 2rem;
+}
+
+.checkout-pay-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.checkout-pay-desc {
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 400px;
+}
+
+.checkout-pay-btn-wrapper {
+  max-width: 300px;
+}
+
+.admin-denied-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.admin-loading-text {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+}
+
+.home-layout {
+  background: #000;
+}
+
+.home-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  text-align: center;
+  gap: 4rem;
+  background: radial-gradient(circle at top right, #1a1c23, transparent), #000;
+  color: #fff;
+}
+
+.home-hero-container {
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.home-hero-title {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.home-hero-desc {
+  font-size: 1.25rem;
+  color: #9aa3b2;
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.home-actions-container {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.home-link {
+  text-decoration: none;
+}
+
+.home-primary-btn {
+  min-width: 220px;
+  padding: 1.2rem 3rem;
+  font-size: 1.1rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+}
+
+.home-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1100px;
+  margin-top: 4rem;
+}
+
+.home-feature-card {
+  background: #111318;
+  border: 1px solid #222;
+  border-radius: 24px;
+  padding: 2.5rem;
+  text-align: left;
+}
+
+.home-feature-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.home-feature-desc {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+.admin-status-Aprobado { background: #dcfce7; color: #16a34a; }
+.admin-status-Pendiente { background: #fef9c3; color: #a16207; }
+.admin-status-Cancelado { background: #fee2e2; color: #dc2626; }
