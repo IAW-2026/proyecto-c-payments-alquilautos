@@ -15,6 +15,11 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "No se encontró un pago para esta reserva" }, { status: 404 });
     }
 
+    const pagoAprobado = await db.pago.update({
+      where: { id_pago: pago.id_pago },
+      data: { estado: "Aprobado" },
+    });
+
     await db.historialEstadoPago.create({
       data: {
         id_pago: pago.id_pago,
@@ -22,6 +27,9 @@ export async function PATCH(request: Request) {
         descripcion: "Pago aprobado manualmente desde el botón de prueba",
       }
     });
+
+    const { notifyApp } = await import("@/lib/mockWebhooks");
+    await notifyApp("vendedores", pago.id_reserva, "Aprobado");
 
     return NextResponse.json({ success: true, estado: "Aprobado" });
   } catch (error) {

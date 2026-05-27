@@ -44,14 +44,13 @@ export async function GET() {
 
     // Mapeamos al formato que espera el frontend del admin
     const transactions = pagos.map((pago) => {
-      const ultimoEstado = pago.HistorialEstadoPago[0];
       return {
         id: String(pago.id_pago),
         cliente: `Reserva #${pago.id_reserva}`,
         vehiculo: `Propietario #${pago.id_propietario}`,
         fecha: pago.fecha.toLocaleDateString('es-AR'),
         monto: pago.monto_pagar,
-        estado: ultimoEstado?.estado || "Pendiente",
+        estado: pago.estado,
         // Datos extra para la estética de la tabla
         iniciales: "R",
         color: "#6366f1" 
@@ -60,7 +59,7 @@ export async function GET() {
 
     // Calcular estadísticas básicas (KPIs)
     const totalVentas = pagos.reduce((acc, p) => acc + p.monto_pagar, 0);
-    const pagosAprobados = pagos.filter(p => p.HistorialEstadoPago[0]?.estado === "Aprobado").length;
+    const pagosAprobados = pagos.filter(p => p.estado === "Aprobado").length;
 
     return NextResponse.json({
       transactions,

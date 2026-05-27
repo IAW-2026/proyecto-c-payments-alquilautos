@@ -13,6 +13,7 @@ model Pago {
   id_propietario      Int
   monto_pagar         Float
   fecha               DateTime              @default(now())
+  estado              String                @default("Pendiente")
   HistorialEstadoPago HistorialEstadoPago[]
 }
 
@@ -25,8 +26,3 @@ model HistorialEstadoPago {
   Pago                     Pago     @relation(fields: [id_pago], references: [id_pago])
 }
 
-model playing_with_neon {
-  id    Int    @id @default(autoincrement())
-  name  String
-  value Float? @db.Real
-}

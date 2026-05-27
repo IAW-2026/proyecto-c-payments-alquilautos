@@ -55,7 +55,12 @@ export async function POST(request: Request) {
       nuevoEstado = "Cancelado";
     }
 
-    // 5. Actualizar nuestra base de datos (HistorialEstadoPago)
+    // 5. Actualizar nuestra base de datos (Pago y HistorialEstadoPago)
+    const pagoActualizado = await db.pago.update({
+      where: { id_pago: Number(id_pago) },
+      data: { estado: nuevoEstado },
+    });
+
     await db.historialEstadoPago.create({
       data: {
         id_pago: Number(id_pago),
@@ -65,6 +70,15 @@ export async function POST(request: Request) {
     });
 
     console.log(`Pago ${id_pago} actualizado a ${nuevoEstado} vía Webhook.`);
+
+    // 6. Notificar a las aplicaciones externas si corresponde
+    if (nuevoEstado === "Aprobado" || nuevoEstado === "Cancelado") {
+      const { notifyApp } = await import("@/lib/mockWebhooks");
+      await notifyApp("vendedores", pagoActualizado.id_reserva, nuevoEstado as "Aprobado" | "Cancelado");
+      if (nuevoEstado === "Cancelado") {
+        await notifyApp("shipping", pagoActualizado.id_reserva, "Cancelado");
+      }
+    }
 
     return new NextResponse("OK", { status: 200 });
   } catch (error) {

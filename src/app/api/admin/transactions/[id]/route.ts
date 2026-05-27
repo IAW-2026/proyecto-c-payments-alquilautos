@@ -60,16 +60,27 @@ export async function DELETE(
       );
     }
 
-    // 6. Eliminamos el historial de estados y luego el pago
-    await db.historialEstadoPago.deleteMany({
+    // 6. En lugar de borrar físicamente, actualizamos el estado a "Cancelado"
+    const pagoCancelado = await db.pago.update({
       where: { id_pago: pagoId },
+      data: { estado: "Cancelado" },
     });
 
-    await db.pago.delete({
-      where: { id_pago: pagoId },
+    // 7. Agregamos el historial
+    await db.historialEstadoPago.create({
+      data: {
+        id_pago: pagoId,
+        estado: "Cancelado",
+        descripcion: "Transacción cancelada por administrador",
+      },
     });
 
-    return NextResponse.json({ success: true, message: "Transacción eliminada correctamente" });
+    // 8. Notificar a las aplicaciones externas (Webhooks Mock)
+    const { notifyApp } = await import("@/lib/mockWebhooks");
+    await notifyApp("vendedores", pago.id_reserva, "Cancelado");
+    await notifyApp("shipping", pago.id_reserva, "Cancelado");
+
+    return NextResponse.json({ success: true, message: "Transacción cancelada correctamente" });
   } catch (error) {
     console.error("Error al eliminar transacción:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

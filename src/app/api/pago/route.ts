@@ -17,6 +17,7 @@ export async function POST(request: Request) {
         id_alquilador: Number(id_alquilador || 0),
         id_propietario: Number(id_propietario || 0),
         monto_pagar: parseFloat(monto_pagar),
+        estado: "Pendiente",
       },
     });
 
@@ -25,11 +26,11 @@ export async function POST(request: Request) {
       data: {
         id_pago: nuevoPago.id_pago,
         estado: "Pendiente",
-        descripcion: "Pago iniciado por Shipping App",
+        descripcion: "Pago ingresado desde la app de Vendedores",
       },
     });
 
-    return NextResponse.json({ id_pago: nuevoPago.id_pago });
+    return NextResponse.json({ success: true, id_pago: nuevoPago.id_pago, id_reserva: nuevoPago.id_reserva });
   } catch (error) {
     console.error("Error al crear pago:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
