@@ -47,12 +47,12 @@ export async function POST(request: Request) {
       return new NextResponse("OK", { status: 200 });
     }
 
-    // 4. Mapear el estado de Mercado Pago a nuestro estado
+    // 4. Mapear el estado de Mercado Pago a nuestro estado.
+    // Si MP rechaza o cancela el intento de pago, queda en "Pendiente" para que
+    // el usuario pueda reintentar. Solo el admin puede cancelar desde el panel.
     let nuevoEstado = "Pendiente";
     if (mpStatus === "approved") {
       nuevoEstado = "Aprobado";
-    } else if (mpStatus === "rejected" || mpStatus === "cancelled") {
-      nuevoEstado = "Cancelado";
     }
 
     // 5. Actualizar nuestra base de datos (Pago y HistorialEstadoPago)
@@ -66,25 +66,23 @@ export async function POST(request: Request) {
         id_pago: Number(id_pago),
         estado: nuevoEstado,
         descripcion: `Mercado Pago: ${mpStatusDetail || mpStatus}`,
-      }
+      },
     });
 
     console.log(`Pago ${id_pago} actualizado a ${nuevoEstado} vía Webhook.`);
 
-    // 6. Notificar a las aplicaciones externas si corresponde
-    if (nuevoEstado === "Aprobado" || nuevoEstado === "Cancelado") {
+    // 6. Notificar a las aplicaciones externas si corresponde.
+    // Solo se notifica cuando MP aprueba el pago.
+    // La cancelación la dispara el admin desde la pantalla de transacciones.
+    if (nuevoEstado === "Aprobado") {
       const { notifyApp } = await import("@/lib/mockWebhooks");
-      await notifyApp("vendedores", pagoActualizado.id_reserva, nuevoEstado as "Aprobado" | "Cancelado");
-      if (nuevoEstado === "Cancelado") {
-        await notifyApp("shipping", pagoActualizado.id_reserva, "Cancelado");
-      }
+      await notifyApp("sellerApp", pagoActualizado.id_reserva, "Aprobado");
+      await notifyApp("shippingApp", pagoActualizado.id_reserva, "Aprobado");
     }
 
     return new NextResponse("OK", { status: 200 });
   } catch (error) {
     console.error("Error en Webhook Mercado Pago:", error);
-    // Aunque haya error interno, es buena práctica devolver 200 a MP para que no reintente infinitamente,
-    // o 500 si se quiere que MP reintente la notificación más tarde.
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

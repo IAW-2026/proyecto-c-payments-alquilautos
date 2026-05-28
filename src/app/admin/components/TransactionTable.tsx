@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Transaction, ESTADO_STYLES, formatCurrency } from "../constants";
+import { cancelTransaction } from "../actions";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -87,24 +88,15 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar esta transacción pendiente?")) return;
+    if (!confirm("¿Estás seguro de cancelar esta transacción pendiente?")) return;
     
     setDeletingId(id);
     try {
-      const response = await fetch(`/api/admin/transactions/${id}`, {
-        method: "DELETE",
-      });
-      const data = await response.json();
-      
-      if (!response.ok) {
-        alert(data.error || "Error al eliminar la transacción");
-        return;
-      }
-      
+      await cancelTransaction(id);
       onDeleteTransaction(id);
     } catch (error) {
-      console.error("Error al eliminar transacción:", error);
-      alert("No se pudo eliminar la transacción. Por favor, intente de nuevo.");
+      console.error("Error al cancelar transacción:", error);
+      alert(error instanceof Error ? error.message : "No se pudo cancelar la transacción. Por favor, intente de nuevo.");
     } finally {
       setDeletingId(null);
     }
@@ -171,15 +163,15 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
                         onClick={() => handleDelete(t.id)}
                         disabled={deletingId === t.id}
                         className="admin-delete-btn"
-                        title="Eliminar transacción"
+                        title="Cancelar transacción"
                       >
                         {deletingId === t.id ? (
                           "..."
                         ) : (
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 6h18"></path>
-                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
                           </svg>
                         )}
                       </button>

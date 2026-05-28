@@ -1,10 +1,10 @@
 export async function notifyApp(
-  targetApp: "vendedores" | "shipping",
+  targetApp: "sellerApp" | "shippingApp",
   id_reserva: number | string,
   estado: "Aprobado" | "Cancelado"
 ) {
   const targetUrl =
-    targetApp === "vendedores"
+    targetApp === "sellerApp"
       ? `https://api.vendedores.local/reserva/${id_reserva}`
       : `https://api.shipping.local/reserva/${id_reserva}`;
 
@@ -20,19 +20,6 @@ export async function notifyApp(
 
   // Simular un retraso de red
   await new Promise((resolve) => setTimeout(resolve, 500));
-
-  /* 
-  En producción esto sería algo así:
-  try {
-    await fetch(targetUrl, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-  } catch (err) {
-    console.error("Error al notificar", err);
-  }
-  */
 
   console.log(`[MOCK WEBHOOK] Notificación enviada con éxito a ${targetApp}.`);
 }

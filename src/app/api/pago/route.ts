@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import db from "@/lib/db";
+import { mpPreference } from "@/lib/mercado-pago";
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +22,38 @@ export async function POST(request: Request) {
       },
     });
 
-    // Registrar en el historial (se llama HistorialEstadoPago)
+    // Crear la Preference en Mercado Pago para generar el link de pago
+    const preference = await mpPreference.create({
+      body: {
+        items: [
+          {
+            id: String(nuevoPago.id_pago),
+            title: `Reserva #${id_reserva}`,
+            quantity: 1,
+            unit_price: parseFloat(monto_pagar),
+            currency_id: "ARS",
+          },
+        ],
+        external_reference: String(nuevoPago.id_pago),
+        notification_url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/api/webhooks/mercado-pago`,
+        back_urls: {
+          success: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/success`,
+          failure: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/failure`,
+          pending: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/pending`,
+        },
+        auto_return: "approved",
+      },
+    });
+
+    const link_pago = preference.init_point || preference.sandbox_init_point;
+
+    // Guardar el link de pago en la base de datos
+    await db.pago.update({
+      where: { id_pago: nuevoPago.id_pago },
+      data: { link_pago },
+    });
+
+    // Registrar en el historial (HistorialEstadoPago)
     await db.historialEstadoPago.create({
       data: {
         id_pago: nuevoPago.id_pago,
@@ -30,7 +62,12 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, id_pago: nuevoPago.id_pago, id_reserva: nuevoPago.id_reserva });
+    return NextResponse.json({
+      success: true,
+      id_pago: nuevoPago.id_pago,
+      id_reserva: nuevoPago.id_reserva,
+      link_pago,
+    });
   } catch (error) {
     console.error("Error al crear pago:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

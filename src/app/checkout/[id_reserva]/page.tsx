@@ -13,32 +13,22 @@ export default function CheckoutPage() {
   const handlePay = async () => {
     setLoading(true);
     try {
-      // 1. Aseguro que el pago existe (lógica de prueba para etapa 2)
-      await fetch("/api/pago", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_reserva: id_reserva,
-          monto_pagar: 150,
-          id_alquilador: 1,
-          id_propietario: 1
-        }),
-      });
+      // Obtener el link de pago previamente generado
+      const response = await fetch(`/api/pago/link?id_reserva=${id_reserva}`);
+      
+      if (!response.ok) {
+        const error = await response.json();
+        alert(error.error || "El pago no está disponible");
+        return;
+      }
 
-      // 2. Se crea la preferencia de Mercado Pago
-      const prefResponse = await fetch("/api/pago/preference", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_reserva }),
-      });
+      const data = await response.json();
 
-      const data = await prefResponse.json();
-
-      if (data.init_point) {
+      if (data.link_pago) {
         // Redirigir a Mercado Pago
-        window.location.href = data.init_point;
+        window.location.href = data.link_pago;
       } else {
-        alert(data.error || "Error al generar link de pago");
+        alert("Error: No se encontró el link de pago");
       }
     } catch (error) {
       console.error("Error:", error);
