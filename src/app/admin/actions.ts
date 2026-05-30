@@ -35,7 +35,7 @@ export async function getTransactions() {
     vehiculo: `Propietario #${pago.id_propietario}`,
     fecha: pago.fecha.toLocaleDateString("es-AR"),
     monto: pago.monto_pagar,
-    estado: pago.estado as "Aprobado" | "Pendiente" | "Cancelado",
+    estado: pago.estado as "Aprobado" | "Pendiente" | "Cancelado" | "Coordinado",
     iniciales: "R" as const,
     color: "#6366f1" as const,
   }));
@@ -72,8 +72,8 @@ export async function cancelTransaction(id: string) {
     throw new Error("Transacción no encontrada");
   }
 
-  if (pago.estado !== "Pendiente") {
-    throw new Error("Solo se pueden cancelar transacciones pendientes");
+  if (pago.estado !== "Pendiente" && pago.estado !== "Coordinado") {
+    throw new Error("Solo se pueden cancelar transacciones pendientes o coordinadas");
   }
 
   await db.pago.update({

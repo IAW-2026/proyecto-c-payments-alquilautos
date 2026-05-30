@@ -2,6 +2,63 @@ import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { mpPreference } from "@/lib/mercado-pago";
 
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { id_reserva, estado } = body;
+
+    if (!id_reserva || !estado) {
+      return NextResponse.json({ error: "Faltan datos obligatorios" }, { status: 400 });
+    }
+
+    // Solo permitir la transición Coordinado -> Pendiente desde la buyerApp
+    if (estado !== "Pendiente") {
+      return NextResponse.json(
+        { error: "Solo se puede cambiar a estado Pendiente" },
+        { status: 400 }
+      );
+    }
+
+    const pago = await db.pago.findUnique({
+      where: { id_reserva: Number(id_reserva) },
+    });
+
+    if (!pago) {
+      return NextResponse.json({ error: "Pago no encontrado para esta reserva" }, { status: 404 });
+    }
+
+    if (pago.estado !== "Coordinado") {
+      return NextResponse.json(
+        { error: `No se puede cambiar el estado desde "${pago.estado}" a "Pendiente". Solo se permite desde "Coordinado"` },
+        { status: 400 }
+      );
+    }
+
+    await db.pago.update({
+      where: { id_pago: pago.id_pago },
+      data: { estado: "Pendiente" },
+    });
+
+    await db.historialEstadoPago.create({
+      data: {
+        id_pago: pago.id_pago,
+        estado: "Pendiente",
+        descripcion: "Pago iniciado desde la app de Compradores (checkout)",
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      id_pago: pago.id_pago,
+      id_reserva: pago.id_reserva,
+      estado: "Pendiente",
+    });
+  } catch (error) {
+    console.error("Error al actualizar pago:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -18,7 +75,7 @@ export async function POST(request: Request) {
         id_alquilador: Number(id_alquilador || 0),
         id_propietario: Number(id_propietario || 0),
         monto_pagar: parseFloat(monto_pagar),
-        estado: "Pendiente",
+        estado: "Coordinado",
       },
     });
 
@@ -57,8 +114,8 @@ export async function POST(request: Request) {
     await db.historialEstadoPago.create({
       data: {
         id_pago: nuevoPago.id_pago,
-        estado: "Pendiente",
-        descripcion: "Pago ingresado desde la app de Vendedores",
+        estado: "Coordinado",
+        descripcion: "Pago coordinado desde la app de Vendedores",
       },
     });
 

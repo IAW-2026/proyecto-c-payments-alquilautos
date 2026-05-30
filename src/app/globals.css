@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* ─── Tokens ─────────────────────────────────────────────────── */
 :root {
@@ -1245,3 +1243,4 @@ thead th.sticky-header {
 .admin-status-Aprobado { background: #dcfce7; color: #16a34a; }
 .admin-status-Pendiente { background: #fef9c3; color: #a16207; }
 .admin-status-Cancelado { background: #fee2e2; color: #dc2626; }
+.admin-status-Coordinado { background: #dbeafe; color: #1d4ed8; }

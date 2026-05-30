@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       } else if (body.action?.startsWith("payment.") && body.data?.id) {
         paymentId = body.data.id;
       }
-    } catch (error) {
+    } catch {
       // Body no es JSON válido o no está presente, intentamos con query params (formato IPN antiguo)
       if (queryTopic === "payment" && queryId) {
         paymentId = queryId;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Transaction, ESTADO_STYLES, formatCurrency } from "../constants";
 import { cancelTransaction } from "../actions";
 import jsPDF from "jspdf";
@@ -88,7 +88,7 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de cancelar esta transacción pendiente?")) return;
+    if (!confirm("¿Estás seguro de cancelar esta transacción?")) return;
     
     setDeletingId(id);
     try {
@@ -157,8 +157,13 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
                   <td className="admin-table-td-date">{t.fecha}</td>
                   <td className="admin-table-td-amount">{formatCurrency(t.monto)}</td>
                   <td className="admin-table-td">
-                    <span className={`admin-status-badge admin-status-${t.estado}`}>{t.estado}</span>
-                    {t.estado === "Pendiente" && (
+                    <span
+                      className={`admin-status-badge admin-status-${t.estado}`}
+                      style={ESTADO_STYLES[t.estado]}
+                    >
+                      {t.estado}
+                    </span>
+                    {(t.estado === "Pendiente" || t.estado === "Coordinado") && (
                       <button
                         onClick={() => handleDelete(t.id)}
                         disabled={deletingId === t.id}

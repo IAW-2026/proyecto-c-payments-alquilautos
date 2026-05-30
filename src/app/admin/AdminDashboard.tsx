@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import Header from "@/components/checkout/Header";
 import Footer from "@/components/checkout/Footer";
@@ -18,14 +18,22 @@ interface AdminDashboardProps {
   };
 }
 
-export default function AdminDashboard({ transactions: initialTransactions, stats: initialStats }: AdminDashboardProps) {
+export default function AdminDashboard({ transactions: initialTransactions }: AdminDashboardProps) {
   const { isLoaded, isSignedIn, user } = useUser();
   const { signOut } = useClerk();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [transactions, setTransactions] = useState(initialTransactions);
-  const [stats, setStats] = useState(initialStats);
+
+  const stats = useMemo(
+    () => ({
+      totalVentas: transactions.reduce((total, pago) => total + pago.monto, 0),
+      cantidadPagos: transactions.length,
+      pagosAprobados: transactions.filter((pago) => pago.estado === "Aprobado").length,
+    }),
+    [transactions]
+  );
 
   // 1. Extraemos email y rol de Clerk
   const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase();

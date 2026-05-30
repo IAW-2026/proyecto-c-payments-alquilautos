@@ -13,20 +13,33 @@ export default function CheckoutPage() {
   const handlePay = async () => {
     setLoading(true);
     try {
-      // Obtener el link de pago previamente generado
-      const response = await fetch(`/api/pago/link?id_reserva=${id_reserva}`);
+      // 1. Obtener el pago para conocer el id_pago
+      const linkResponse = await fetch(`/api/pago/link?id_reserva=${id_reserva}`);
       
-      if (!response.ok) {
-        const error = await response.json();
+      if (!linkResponse.ok) {
+        const error = await linkResponse.json();
         alert(error.error || "El pago no está disponible");
         return;
       }
 
-      const data = await response.json();
+      const linkData = await linkResponse.json();
 
-      if (data.link_pago) {
-        // Redirigir a Mercado Pago
-        window.location.href = data.link_pago;
+      // 2. Cambiar estado de "Coordinado" a "Pendiente"
+      const patchResponse = await fetch(`/api/pago`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_reserva: Number(id_reserva), estado: "Pendiente" }),
+      });
+
+      if (!patchResponse.ok) {
+        const error = await patchResponse.json();
+        alert(error.error || "No se pudo iniciar el pago");
+        return;
+      }
+
+      // 3. Redirigir a Mercado Pago
+      if (linkData.link_pago) {
+        window.location.href = linkData.link_pago;
       } else {
         alert("Error: No se encontró el link de pago");
       }
