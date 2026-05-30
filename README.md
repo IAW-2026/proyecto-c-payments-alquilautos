@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Payments App - AlquilAutos
 
-## Getting Started
+## Descripción
 
-First, run the development server:
+La **Payments App** es un sistema que integra una pasarela de cobros. Se encarga de procesar de manera segura las transacciones financieras entre Alquiladores y Propietarios mediante la integración con el SDK de Mercado Pago (Sandbox).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+La aplicación expone una API REST para interactuar de forma segura con el resto de los servicios distribuidos y cuenta con una base de datos propia en PostgreSQL (vía Prisma ORM) para registrar y persistir de manera inmutable el historial de cobros y estados de pago.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deploy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Link de la App (Vercel):** [https://proyecto-c-payments-alquilautos-c0lcdch49-ap-abb9dd6f.vercel.app/]
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Instrucciones de Acceso por Usuario
 
-To learn more about Next.js, take a look at the following resources:
+La autenticación y gestión de sesiones está centralizada bajo un único entorno de **Clerk**. Los permisos de acceso locales se aplican de manera restrictiva según los roles (`role`) inyectados en el JWT del usuario.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Administrador (`admin`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Permisos:** Acceso exclusivo al panel de supervisión y analíticas (`/admin`) para la auditoría de cobros globales, métricas y buscador dinámico de transacciones.
+- **Credenciales de prueba:**
+  - **Usuario:** `admin.payments@alquilautos.com` (O el email de tu cuenta de pruebas)
+  - **Contraseña:** [Ingresar contraseña de prueba]
 
-## Deploy on Vercel
+## Consideraciones extra
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Para realizar un pago entrar por url a /checkout, esta pantalla es una mockeada que cuando las aplicaciones estén conectadas estará en el front de la aplicación buyerApp, de momento sirve tanto para realizar y validar el funcionamiento de pagos como para disparar endpoints consecuentemente.
