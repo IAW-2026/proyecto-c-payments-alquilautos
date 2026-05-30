@@ -8,6 +8,7 @@ import AdminHeader from "./components/AdminHeader";
 import StatCard from "./components/StatCard";
 import TransactionTable from "./components/TransactionTable";
 import { formatCurrency, Transaction } from "./constants";
+import { isAdminUser } from "@/lib/admin";
 
 interface AdminDashboardProps {
   transactions: Transaction[];
@@ -35,19 +36,8 @@ export default function AdminDashboard({ transactions: initialTransactions }: Ad
     [transactions]
   );
 
-  // 1. Extraemos email y rol de Clerk
   const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
-  const role = user?.publicMetadata?.role;
-
-  // 2. Obtenemos emails permitidos de la whitelist pública
-  const adminEmailsEnv = process.env.NEXT_PUBLIC_ADMIN_EMAILS || "";
-  const adminEmails = adminEmailsEnv
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
-  // 3. Verificamos si tiene acceso por rol o whitelist de emails
-  const isAuthorized = role === "admin" || (email && adminEmails.includes(email));
+  const isAuthorized = isAdminUser(user);
 
   // --- RETORNOS TEMPRANOS DE RENDER ---
 

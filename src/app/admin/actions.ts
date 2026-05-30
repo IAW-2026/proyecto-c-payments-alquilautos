@@ -4,19 +4,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { notifyApp } from "@/lib/mockWebhooks";
+import { isAdminUser, type ClerkUserForRoleCheck } from "@/lib/admin";
 
 function isAdmin(user: Awaited<ReturnType<typeof currentUser>>): boolean {
-  if (!user) return false;
-  const email = user.primaryEmailAddress?.emailAddress?.toLowerCase();
-  const role = user.publicMetadata?.role;
-
-  const adminEmailsEnv = process.env.NEXT_PUBLIC_ADMIN_EMAILS || process.env.ADMIN_EMAILS || "";
-  const adminEmails = adminEmailsEnv
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
-  return role === "admin" || (!!email && adminEmails.includes(email));
+  return isAdminUser(user as ClerkUserForRoleCheck);
 }
 
 export async function getTransactions() {

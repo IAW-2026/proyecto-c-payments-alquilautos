@@ -2,24 +2,19 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
 import { getTransactions } from "./actions";
 import AdminDashboard from "./AdminDashboard";
+import { isAdminUser } from "@/lib/admin";
 
 export default async function AdminPanel() {
   const user = await currentUser();
+  const isAuthorized = isAdminUser(user);
 
-  // Check authorization server-side
-  const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
-  const role = user?.publicMetadata?.role;
+  if (!user) {
+    redirect("/sign-in");
+  }
 
-  const adminEmailsEnv = process.env.NEXT_PUBLIC_ADMIN_EMAILS || process.env.ADMIN_EMAILS || "";
-  const adminEmails = adminEmailsEnv
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-
-  const isAuthorized = role === "admin" || (email && adminEmails.includes(email));
-
-  if (!user || !isAuthorized) {
-    redirect("/");
+  // Si no está autorizado, mostrar pantalla de acceso denegado en AdminDashboard
+  if (!isAuthorized) {
+    return <AdminDashboard transactions={[]} stats={{ totalVentas: 0, cantidadPagos: 0, pagosAprobados: 0 }} />;
   }
 
   const { transactions, stats } = await getTransactions();
