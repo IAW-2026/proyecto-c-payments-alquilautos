@@ -1267,6 +1267,15 @@ thead th.sticky-header {
    RESPONSIVE — TABLET CHICA (≤768px)
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+  /* ── UserButton flotante arriba a la derecha ── */
+  .admin-user-button-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+    min-width: auto;
+  }
+
   /* ── Home ── */
   .home-hero-title { font-size: 3rem; }
   .home-hero-desc { font-size: 1.1rem; padding: 0 0.5rem; }
@@ -1294,6 +1303,7 @@ thead th.sticky-header {
   .admin-table-td-amount { padding: 0.75rem 1rem; }
   .admin-table-td-status { padding: 0.75rem 1rem; }
   .admin-table-td-actions { padding: 0.75rem 1rem; }
+  .admin-client-avatar { display: none; }
 
   /* ── Checkout ── */
   .checkout-pay-container { padding: 3rem 1.5rem; }
