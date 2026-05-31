@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     // el usuario pueda reintentar. Solo el admin puede cancelar desde el panel.
     let nuevoEstado = "Pendiente";
     if (mpStatus === "approved") {
-      nuevoEstado = "Aprobado";
+      nuevoEstado = "Aprobada";
     }
 
     // 5. Actualizar nuestra base de datos (Pago y HistorialEstadoPago)
@@ -74,10 +74,10 @@ export async function POST(request: Request) {
     // 6. Notificar a las aplicaciones externas si corresponde.
     // Solo se notifica cuando MP aprueba el pago.
     // La cancelación la dispara el admin desde la pantalla de transacciones.
-    if (nuevoEstado === "Aprobado") {
+    if (nuevoEstado === "Aprobada") {
       const { notifyApp } = await import("@/lib/mockWebhooks");
-      await notifyApp("sellerApp", pagoActualizado.id_reserva, "Aprobado");
-      await notifyApp("shippingApp", pagoActualizado.id_reserva, "Aprobado");
+      await notifyApp("sellerApp", pagoActualizado.id_reserva, "Aprobada");
+      await notifyApp("shippingApp", pagoActualizado.id_reserva, "Aprobada");
     }
 
     return new NextResponse("OK", { status: 200 });

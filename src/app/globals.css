@@ -1137,6 +1137,110 @@ thead th.sticky-header {
   max-width: 300px;
 }
 
+.checkout-test-hint {
+  text-align: center;
+}
+
+.checkout-test-section {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.checkout-test-divider {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.checkout-test-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.checkout-test-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.checkout-test-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.checkout-test-field input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.checkout-test-field input:focus {
+  border-color: var(--brand);
+}
+
+.btn-test {
+  padding: 0.65rem 1rem;
+  background: var(--brand);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.btn-test:hover {
+  background: var(--brand-hover);
+}
+
+.btn-test:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-test-reset {
+  background: transparent;
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  font-size: 0.8rem;
+}
+
+.btn-test-reset:hover {
+  background: var(--brand-light);
+}
+
+.checkout-test-success {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.75rem;
+  background: var(--brand-light);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--brand-hover);
+}
+
+.checkout-test-error {
+  color: #dc2626;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
 .admin-denied-actions {
   display: flex;
   gap: 1rem;
@@ -1246,10 +1350,10 @@ thead th.sticky-header {
   line-height: 1.6;
 }
 
-.admin-status-Aprobado { background: #dcfce7; color: #16a34a; }
+.admin-status-Aprobada { background: #dcfce7; color: #16a34a; }
 .admin-status-Pendiente { background: #fef9c3; color: #a16207; }
-.admin-status-Cancelado { background: #fee2e2; color: #dc2626; }
-.admin-status-Coordinado { background: #dbeafe; color: #1d4ed8; }
+.admin-status-Cancelada { background: #fee2e2; color: #dc2626; }
+.admin-status-Coordinada { background: #dbeafe; color: #1d4ed8; }
 
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE — TABLET (≤1024px)

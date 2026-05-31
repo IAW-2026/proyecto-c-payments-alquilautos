@@ -163,7 +163,7 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
                     >
                       {t.estado}
                     </span>
-                    {(t.estado === "Pendiente" || t.estado === "Coordinado") && (
+                    {(t.estado === "Pendiente" || t.estado === "Coordinada") && (
                       <button
                         onClick={() => handleDelete(t.id)}
                         disabled={deletingId === t.id}

@@ -2,62 +2,7 @@ import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { mpPreference } from "@/lib/mercado-pago";
 
-export async function PATCH(request: Request) {
-  try {
-    const body = await request.json();
-    const { id_reserva, estado } = body;
-
-    if (!id_reserva || !estado) {
-      return NextResponse.json({ error: "Faltan datos obligatorios" }, { status: 400 });
-    }
-
-    // Solo permitir la transición Coordinado -> Pendiente desde la buyerApp
-    if (estado !== "Pendiente") {
-      return NextResponse.json(
-        { error: "Solo se puede cambiar a estado Pendiente" },
-        { status: 400 }
-      );
-    }
-
-    const pago = await db.pago.findUnique({
-      where: { id_reserva: Number(id_reserva) },
-    });
-
-    if (!pago) {
-      return NextResponse.json({ error: "Pago no encontrado para esta reserva" }, { status: 404 });
-    }
-
-    if (pago.estado !== "Coordinado") {
-      return NextResponse.json(
-        { error: `No se puede cambiar el estado desde "${pago.estado}" a "Pendiente". Solo se permite desde "Coordinado"` },
-        { status: 400 }
-      );
-    }
-
-    await db.pago.update({
-      where: { id_pago: pago.id_pago },
-      data: { estado: "Pendiente" },
-    });
-
-    await db.historialEstadoPago.create({
-      data: {
-        id_pago: pago.id_pago,
-        estado: "Pendiente",
-        descripcion: "Pago iniciado desde la app de Compradores (checkout)",
-      },
-    });
-
-    return NextResponse.json({
-      success: true,
-      id_pago: pago.id_pago,
-      id_reserva: pago.id_reserva,
-      estado: "Pendiente",
-    });
-  } catch (error) {
-    console.error("Error al actualizar pago:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-  }
-}
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com";
 
 export async function POST(request: Request) {
   try {
@@ -75,7 +20,7 @@ export async function POST(request: Request) {
         id_alquilador: Number(id_alquilador || 0),
         id_propietario: Number(id_propietario || 0),
         monto_pagar: parseFloat(monto_pagar),
-        estado: "Coordinado",
+        estado: "Coordinada",
       },
     });
 
@@ -92,11 +37,11 @@ export async function POST(request: Request) {
           },
         ],
         external_reference: String(nuevoPago.id_pago),
-        notification_url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/api/webhooks/mercado-pago`,
+        notification_url: `${BASE_URL}/api/webhooks/mercado-pago`,
         back_urls: {
-          success: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/success`,
-          failure: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/failure`,
-          pending: `${process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com"}/pending`,
+          success: `${BASE_URL}/`,
+          failure: `${BASE_URL}/`,
+          pending: `${BASE_URL}/`,
         },
         auto_return: "approved",
       },
@@ -114,7 +59,7 @@ export async function POST(request: Request) {
     await db.historialEstadoPago.create({
       data: {
         id_pago: nuevoPago.id_pago,
-        estado: "Coordinado",
+        estado: "Coordinada",
         descripcion: "Pago coordinado desde la app de Vendedores",
       },
     });
@@ -125,8 +70,17 @@ export async function POST(request: Request) {
       id_reserva: nuevoPago.id_reserva,
       link_pago,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error al crear pago:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    const err = error as Record<string, unknown>;
+    const status = typeof err.status === "number" ? err.status : 500;
+    const mpMessage = typeof err.message === "string" ? err.message : "";
+    const message =
+      status === 401 || mpMessage.includes("401")
+        ? "Error de autenticación con Mercado Pago. Revisá el ACCESS_TOKEN."
+        : mpMessage.includes("ENOTFOUND") || mpMessage.includes("ECONNREFUSED") || mpMessage.includes("fetch")
+        ? "No se pudo conectar con Mercado Pago. Revisá tu conexión a internet."
+        : "Error interno al crear el pago";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

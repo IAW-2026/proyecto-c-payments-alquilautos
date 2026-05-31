@@ -31,7 +31,7 @@ export default function AdminDashboard({ transactions: initialTransactions }: Ad
     () => ({
       totalVentas: transactions.reduce((total, pago) => total + pago.monto, 0),
       cantidadPagos: transactions.length,
-      pagosAprobados: transactions.filter((pago) => pago.estado === "Aprobado").length,
+      pagosAprobados: transactions.filter((pago) => pago.estado === "Aprobada").length,
     }),
     [transactions]
   );
@@ -138,7 +138,7 @@ export default function AdminDashboard({ transactions: initialTransactions }: Ad
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
           onDeleteTransaction={(id) => setTransactions((prev) => 
-            prev.map((t) => t.id === id ? { ...t, estado: "Cancelado" } : t)
+            prev.map((t) => t.id === id ? { ...t, estado: "Cancelada" } : t)
           )}
         />
       </div>

@@ -9,26 +9,21 @@ export default function CheckoutPage() {
   const params = useParams();
   const id_reserva = params?.id_reserva;
   const [loading, setLoading] = useState(false);
+  const [testMonto, setTestMonto] = useState("");
+  const [testAlquilador, setTestAlquilador] = useState("");
+  const [testPropietario, setTestPropietario] = useState("");
+  const [creando, setCreando] = useState(false);
+  const [pagoCreado, setPagoCreado] = useState(false);
+  const [linkPago, setLinkPago] = useState("");
+  const [errorTest, setErrorTest] = useState("");
 
   const handlePay = async () => {
     setLoading(true);
     try {
-      // 1. Obtener el pago para conocer el id_pago
-      const linkResponse = await fetch(`/api/pago/link?id_reserva=${id_reserva}`);
-      
-      if (!linkResponse.ok) {
-        const error = await linkResponse.json();
-        alert(error.error || "El pago no está disponible");
-        return;
-      }
-
-      const linkData = await linkResponse.json();
-
-      // 2. Cambiar estado de "Coordinado" a "Pendiente"
-      const patchResponse = await fetch(`/api/pago`, {
+      const patchResponse = await fetch(`/api/pago/${id_reserva}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_reserva: Number(id_reserva), estado: "Pendiente" }),
+        body: JSON.stringify({ pendiente: true }),
       });
 
       if (!patchResponse.ok) {
@@ -37,9 +32,8 @@ export default function CheckoutPage() {
         return;
       }
 
-      // 3. Redirigir a Mercado Pago
-      if (linkData.link_pago) {
-        window.location.href = linkData.link_pago;
+      if (linkPago) {
+        window.location.href = linkPago;
       } else {
         alert("Error: No se encontró el link de pago");
       }
@@ -48,6 +42,48 @@ export default function CheckoutPage() {
       alert("Error de conexión");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCrearPagoTest = async () => {
+    if (!testMonto) {
+      setErrorTest("El monto es obligatorio");
+      return;
+    }
+
+    setCreando(true);
+    setErrorTest("");
+
+    try {
+      const res = await fetch("/api/pago", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_reserva: Number(id_reserva),
+          monto_pagar: parseFloat(testMonto),
+          id_alquilador: Number(testAlquilador) || 0,
+          id_propietario: Number(testPropietario) || 0,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorTest(data.error || "Error al crear el pago");
+        return;
+      }
+
+      if (!data.link_pago) {
+        setErrorTest("El pago se creó pero no se pudo generar el link de Mercado Pago. Revisá las credenciales.");
+        return;
+      }
+
+      setLinkPago(data.link_pago);
+      setPagoCreado(true);
+    } catch {
+      setErrorTest("Error de conexión");
+    } finally {
+      setCreando(false);
     }
   };
 
@@ -67,10 +103,85 @@ export default function CheckoutPage() {
         <button
           className="btn-primary checkout-pay-btn-wrapper"
           onClick={handlePay}
-          disabled={loading}
+          disabled={loading || !pagoCreado}
         >
           {loading ? "Generando link..." : "Pagar con Mercado Pago"}
         </button>
+
+        {!pagoCreado && (
+          <p className="checkout-test-hint" style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginTop: "-1rem" }}>
+            Creá un pago de prueba abajo para habilitar el botón
+          </p>
+        )}
+
+        <div className="checkout-test-section">
+          <div className="checkout-test-divider">── Zona de Test ──</div>
+
+          <div className="checkout-test-form">
+            <div className="checkout-test-field">
+              <label>Monto *</label>
+              <input
+                type="number"
+                step="0.01"
+                placeholder="15000.00"
+                value={testMonto}
+                onChange={(e) => setTestMonto(e.target.value)}
+                disabled={pagoCreado}
+              />
+            </div>
+
+            <div className="checkout-test-field">
+              <label>ID Alquilador</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={testAlquilador}
+                onChange={(e) => setTestAlquilador(e.target.value)}
+                disabled={pagoCreado}
+              />
+            </div>
+
+            <div className="checkout-test-field">
+              <label>ID Propietario</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={testPropietario}
+                onChange={(e) => setTestPropietario(e.target.value)}
+                disabled={pagoCreado}
+              />
+            </div>
+
+            {!pagoCreado ? (
+              <button
+                className="btn-test"
+                onClick={handleCrearPagoTest}
+                disabled={creando}
+              >
+                {creando ? "Creando..." : "Crear pago de prueba"}
+              </button>
+            ) : (
+              <div className="checkout-test-success">
+                <span>✓ Pago creado correctamente</span>
+                <button
+                  className="btn-test btn-test-reset"
+                  onClick={() => {
+                    setPagoCreado(false);
+                    setLinkPago("");
+                    setTestMonto("");
+                    setTestAlquilador("");
+                    setTestPropietario("");
+                    setErrorTest("");
+                  }}
+                >
+                  Crear otro
+                </button>
+              </div>
+            )}
+
+            {errorTest && <p className="checkout-test-error">{errorTest}</p>}
+          </div>
+        </div>
       </div>
 
       <Footer />

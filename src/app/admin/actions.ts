@@ -26,13 +26,13 @@ export async function getTransactions() {
     vehiculo: `Propietario #${pago.id_propietario}`,
     fecha: pago.fecha.toLocaleDateString("es-AR"),
     monto: pago.monto_pagar,
-    estado: pago.estado as "Aprobado" | "Pendiente" | "Cancelado" | "Coordinado",
+    estado: pago.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
     iniciales: "R" as const,
     color: "#6366f1" as const,
   }));
 
   const totalVentas = pagos.reduce((acc, p) => acc + p.monto_pagar, 0);
-  const pagosAprobados = pagos.filter((p) => p.estado === "Aprobado").length;
+  const pagosAprobados = pagos.filter((p) => p.estado === "Aprobada").length;
 
   return {
     transactions,
@@ -63,25 +63,25 @@ export async function cancelTransaction(id: string) {
     throw new Error("Transacción no encontrada");
   }
 
-  if (pago.estado !== "Pendiente" && pago.estado !== "Coordinado") {
+  if (pago.estado !== "Pendiente" && pago.estado !== "Coordinada") {
     throw new Error("Solo se pueden cancelar transacciones pendientes o coordinadas");
   }
 
   await db.pago.update({
     where: { id_pago: pagoId },
-    data: { estado: "Cancelado" },
+    data: { estado: "Cancelada" },
   });
 
   await db.historialEstadoPago.create({
     data: {
       id_pago: pagoId,
-      estado: "Cancelado",
+      estado: "Cancelada",
       descripcion: "Transacción cancelada por administrador",
     },
   });
 
-  await notifyApp("sellerApp", pago.id_reserva, "Cancelado");
-  await notifyApp("shippingApp", pago.id_reserva, "Cancelado");
+  await notifyApp("sellerApp", pago.id_reserva, "Cancelada");
+  await notifyApp("shippingApp", pago.id_reserva, "Cancelada");
 
   revalidatePath("/admin");
   return { success: true };

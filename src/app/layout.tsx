@@ -15,10 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }} localization={esES}>
-      <html lang="es">
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="es">
+      <body>
+        <ClerkProvider appearance={{ baseTheme: dark }} localization={esES}>
+          {children}
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

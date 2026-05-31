@@ -1,7 +1,7 @@
 export async function notifyApp(
   targetApp: "sellerApp" | "shippingApp",
   id_reserva: number | string,
-  estado: "Aprobado" | "Cancelado"
+  estado: "Aprobada" | "Cancelada"
 ) {
   const targetUrl =
     targetApp === "sellerApp"
