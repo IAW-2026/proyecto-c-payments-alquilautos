@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { mpPreference } from "@/lib/mercado-pago";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://payments-app.com";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://payments-app.com";
 
 export async function POST(request: Request) {
   try {

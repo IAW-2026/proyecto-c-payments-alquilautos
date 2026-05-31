@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
 import Header from "@/components/checkout/Header";
 import Footer from "@/components/checkout/Footer";
@@ -19,22 +20,13 @@ interface AdminDashboardProps {
   };
 }
 
-export default function AdminDashboard({ transactions: initialTransactions }: AdminDashboardProps) {
+export default function AdminDashboard({ transactions, stats }: AdminDashboardProps) {
   const { isLoaded, isSignedIn, user } = useUser();
   const { signOut } = useClerk();
+  const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [transactions, setTransactions] = useState(initialTransactions);
-
-  const stats = useMemo(
-    () => ({
-      totalVentas: transactions.reduce((total, pago) => total + pago.monto, 0),
-      cantidadPagos: transactions.length,
-      pagosAprobados: transactions.filter((pago) => pago.estado === "Aprobada").length,
-    }),
-    [transactions]
-  );
 
   const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const isAuthorized = isAdminUser(user);
@@ -88,6 +80,10 @@ export default function AdminDashboard({ transactions: initialTransactions }: Ad
     );
   }
 
+  const approvedPaymentIds = new Set(
+    transactions.filter((t) => t.estado === "Aprobada").map((t) => t.id_pago)
+  );
+
   const filteredTransactions = transactions.filter((t) => {
     const search = searchTerm.toLowerCase();
     const matchesSearch =
@@ -99,7 +95,7 @@ export default function AdminDashboard({ transactions: initialTransactions }: Ad
     if (selectedDate) {
       const [year, month, day] = selectedDate.split("-");
       const formattedInputDate = `${day}/${month}/${year}`;
-      matchesDate = t.fecha === formattedInputDate;
+      matchesDate = t.fecha.startsWith(formattedInputDate);
     }
 
     return matchesSearch && matchesDate;
@@ -135,11 +131,10 @@ export default function AdminDashboard({ transactions: initialTransactions }: Ad
 
         <TransactionTable
           transactions={filteredTransactions}
+          approvedPaymentIds={approvedPaymentIds}
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
-          onDeleteTransaction={(id) => setTransactions((prev) => 
-            prev.map((t) => t.id === id ? { ...t, estado: "Cancelada" } : t)
-          )}
+          onDeleteTransaction={() => router.refresh()}
         />
       </div>
       <Footer />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Transaction, ESTADO_STYLES, formatCurrency } from "../constants";
+import { Transaction, getEstadoStyle, formatCurrency } from "../constants";
 import { cancelTransaction } from "../actions";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -7,13 +7,14 @@ import * as XLSX from "xlsx";
 
 interface TransactionTableProps {
   transactions: Transaction[];
+  approvedPaymentIds: Set<number>;
   selectedDate: string;
   onDateChange: (date: string) => void;
-  onDeleteTransaction: (id: string) => void;
+  onDeleteTransaction: (id_pago: number) => void;
 }
 
-export default function TransactionTable({ transactions, selectedDate, onDateChange, onDeleteTransaction }: TransactionTableProps) {
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+export default function TransactionTable({ transactions, approvedPaymentIds, selectedDate, onDateChange, onDeleteTransaction }: TransactionTableProps) {
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const exportToPDF = () => {
     try {
@@ -87,13 +88,13 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id_pago: number) => {
     if (!confirm("¿Estás seguro de cancelar esta transacción?")) return;
     
-    setDeletingId(id);
+    setDeletingId(id_pago);
     try {
-      await cancelTransaction(id);
-      onDeleteTransaction(id);
+      await cancelTransaction(String(id_pago));
+      onDeleteTransaction(id_pago);
     } catch (error) {
       console.error("Error al cancelar transacción:", error);
       alert(error instanceof Error ? error.message : "No se pudo cancelar la transacción. Por favor, intente de nuevo.");
@@ -159,18 +160,18 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
                   <td className="admin-table-td">
                     <span
                       className={`admin-status-badge admin-status-${t.estado}`}
-                      style={ESTADO_STYLES[t.estado]}
+                      style={getEstadoStyle(t.estado)}
                     >
                       {t.estado}
                     </span>
-                    {(t.estado === "Pendiente" || t.estado === "Coordinada") && (
+                    {(t.estado === "Pendiente" || t.estado === "Coordinada") && !approvedPaymentIds.has(t.id_pago) && (
                       <button
-                        onClick={() => handleDelete(t.id)}
-                        disabled={deletingId === t.id}
+                        onClick={() => handleDelete(t.id_pago)}
+                        disabled={deletingId === t.id_pago}
                         className="admin-delete-btn"
                         title="Cancelar transacción"
                       >
-                        {deletingId === t.id ? (
+                        {deletingId === t.id_pago ? (
                           "..."
                         ) : (
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

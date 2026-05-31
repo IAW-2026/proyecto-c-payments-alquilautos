@@ -16,23 +16,36 @@ export async function getTransactions() {
     throw new Error("No autorizado");
   }
 
-  const pagos = await db.pago.findMany({
-    orderBy: { fecha: "desc" },
+  const historial = await db.historialEstadoPago.findMany({
+    include: { Pago: true },
+    orderBy: [
+      { id_pago: "desc" },
+      { fecha_hora: "desc" },
+    ],
   });
 
-  const transactions = pagos.map((pago) => ({
-    id: String(pago.id_pago),
-    cliente: `Reserva #${pago.id_reserva}`,
-    vehiculo: `Propietario #${pago.id_propietario}`,
-    fecha: pago.fecha.toLocaleDateString("es-AR"),
-    monto: pago.monto_pagar,
-    estado: pago.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
+  const transactions = historial.map((entry) => ({
+    id: String(entry.id_historial_estado_pago),
+    id_pago: entry.id_pago,
+    cliente: `Reserva #${entry.Pago.id_reserva}`,
+    vehiculo: `Propietario #${entry.Pago.id_propietario}`,
+    fecha: entry.fecha_hora.toLocaleDateString("es-AR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    monto: entry.Pago.monto_pagar,
+    estado: entry.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
     iniciales: "R" as const,
     color: "#6366f1" as const,
   }));
 
-  const totalVentas = pagos.reduce((acc, p) => acc + p.monto_pagar, 0);
-  const pagosAprobados = pagos.filter((p) => p.estado === "Aprobada").length;
+  const pagos = await db.pago.findMany();
+  const pagosAprobadosList = pagos.filter((p) => p.estado === "Aprobada");
+  const totalVentas = pagosAprobadosList.reduce((acc, p) => acc + p.monto_pagar, 0);
+  const pagosAprobados = pagosAprobadosList.length;
 
   return {
     transactions,
