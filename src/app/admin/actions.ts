@@ -32,14 +32,14 @@ export async function getTransactions() {
     vehiculo: `Propietario #${entry.Pago.id_propietario}`,
     fecha: formatDateTime(entry.fecha_hora),
     monto: entry.Pago.monto_pagar,
-    estado: entry.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
-    pagoEstado: entry.Pago.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
+    estado: entry.estado as "Pagada" | "Pendiente" | "Cancelada" | "Coordinada",
+    pagoEstado: entry.Pago.estado as "Pagada" | "Pendiente" | "Cancelada" | "Coordinada",
     iniciales: "R" as const,
     color: "#6366f1" as const,
   }));
 
   const pagos = await db.pago.findMany();
-  const pagosAprobadosList = pagos.filter((p) => p.estado === "Aprobada");
+  const pagosAprobadosList = pagos.filter((p) => p.estado === "Pagada");
   const totalVentas = pagosAprobadosList.reduce((acc, p) => acc + p.monto_pagar, 0);
   const pagosAprobados = pagosAprobadosList.length;
 

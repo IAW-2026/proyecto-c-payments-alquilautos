@@ -2,7 +2,7 @@ import { formatDateTime } from "@/lib/format";
 
 export async function notifyApp(
   id_reserva: number | string,
-  estado: "Aprobada" | "Cancelada" | "Pagada"
+  estado: "Cancelada" | "Pagada"
 ) {
   const targetUrl = `https://api.vendedores.local/reserva/${id_reserva}`;
 

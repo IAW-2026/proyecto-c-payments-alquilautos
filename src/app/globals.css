@@ -864,7 +864,7 @@ thead th.sticky-header {
   line-height: 1.6;
 }
 
-.admin-status-Aprobada { background: #dcfce7; color: #16a34a; }
+.admin-status-Pagada { background: #f3e8ff; color: #9333ea; }
 .admin-status-Pendiente { background: #fef9c3; color: #a16207; }
 .admin-status-Cancelada { background: #fee2e2; color: #dc2626; }
 .admin-status-Coordinada { background: #dbeafe; color: #1d4ed8; }

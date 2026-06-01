@@ -26,7 +26,7 @@ La autenticación y gestión de sesiones está centralizada bajo un único entor
 ## Flujo de prueba recomendado
 
 1. Ingresar a <https://proyecto-c-payments-alquilautos.vercel.app/>
-2. Iniciar sesión con `admin@gmail.com` / `soyAdministrador`
+2. Iniciar sesión con `paymentsAdmin+clerk_test@iaw.com` / `iawuser#`
 3. Ir a `/checkout/[id_reserva]` para simular un pago
 4. Completar los datos en la zona de test y hacer clic en **"Crear pago de prueba"**
 5. Una vez creado, hacer clic en **"Pagar con Mercado Pago"**

@@ -7,6 +7,6 @@ export interface Transaction {
   vehiculo: string;
   fecha: string;
   monto: number;
-  estado: "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada";
-  pagoEstado: "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada";
+  estado: "Pagada" | "Pendiente" | "Cancelada" | "Coordinada";
+  pagoEstado: "Pagada" | "Pendiente" | "Cancelada" | "Coordinada";
 }

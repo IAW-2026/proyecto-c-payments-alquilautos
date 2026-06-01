@@ -82,7 +82,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
   }
 
   const approvedPaymentIds = new Set(
-    transactions.filter((t) => t.estado === "Aprobada").map((t) => t.id_pago)
+    transactions.filter((t) => t.estado === "Pagada").map((t) => t.id_pago)
   );
 
   const filteredTransactions = transactions.filter((t) => {
