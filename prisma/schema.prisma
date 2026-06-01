@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Pago {
+  id_pago             Int                   @id @default(autoincrement())
+  id_reserva          Int                   @unique
+  id_alquilador       Int
+  id_propietario      Int
+  monto_pagar         Float
+  fecha               DateTime              @default(now())
+  estado              String                @default("Pendiente")
+  link_pago           String?
+  HistorialEstadoPago HistorialEstadoPago[]
+}
+
+model HistorialEstadoPago {
+  id_historial_estado_pago Int      @id @default(autoincrement())
+  id_pago                  Int
+  estado                   String
+  fecha_hora               DateTime @default(now())
+  descripcion              String?
+  Pago                     Pago     @relation(fields: [id_pago], references: [id_pago])
+}
+
