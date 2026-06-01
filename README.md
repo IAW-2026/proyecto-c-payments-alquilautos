@@ -57,4 +57,4 @@ Además es recomendable probar la integración de Mercado Pago en incógnito deb
 | Mastercard | `5031 7557 3453 0604` | `123` | `11/30` |
 
 > **Nota:** El email solicitado en el formulario de pago de Mercado Pago puede ser cualquiera (ej. `test@test.com`), no valida en sandbox.
->>>>>>> develop
+
