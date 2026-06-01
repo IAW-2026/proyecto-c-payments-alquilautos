@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     const pago = await db.pago.findUnique({
       where: { id_reserva: Number(id_reserva) },
-      select: { id_pago: true, link_pago: true },
+      select: { link_pago: true },
     });
 
     if (!pago) {
@@ -23,10 +23,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "El pago no tiene un link generado aún" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      id_pago: pago.id_pago,
-      link_pago: pago.link_pago,
-    });
+    return NextResponse.json({ link_pago: pago.link_pago });
   } catch (error) {
     console.error("Error al obtener link de pago:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

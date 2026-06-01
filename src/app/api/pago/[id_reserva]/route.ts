@@ -8,9 +8,9 @@ export async function PATCH(
   try {
     const { id_reserva } = await params;
     const body = await request.json();
-    const { pendiente } = body;
+    const { estado } = body;
 
-    if (!id_reserva || !pendiente) {
+    if (!id_reserva || !estado) {
       return NextResponse.json({ error: "Faltan datos obligatorios" }, { status: 400 });
     }
 
@@ -24,30 +24,25 @@ export async function PATCH(
 
     if (pago.estado !== "Coordinada") {
       return NextResponse.json(
-        { error: `No se puede cambiar el estado desde "${pago.estado}" a "Pendiente". Solo se permite desde "Coordinada"` },
+        { error: `No se puede cambiar el estado desde "${pago.estado}" a "${estado}". Solo se permite desde "Coordinada"` },
         { status: 400 }
       );
     }
 
     await db.pago.update({
       where: { id_pago: pago.id_pago },
-      data: { estado: "Pendiente" },
+      data: { estado },
     });
 
     await db.historialEstadoPago.create({
       data: {
         id_pago: pago.id_pago,
-        estado: "Pendiente",
+        estado,
         descripcion: "Pago iniciado desde la app de Compradores (checkout)",
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      id_pago: pago.id_pago,
-      id_reserva: pago.id_reserva,
-      estado: "Pendiente",
-    });
+    return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Error al actualizar pago:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

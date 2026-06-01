@@ -23,7 +23,7 @@ export default function CheckoutPage() {
       const patchResponse = await fetch(`/api/pago/${id_reserva}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pendiente: true }),
+        body: JSON.stringify({ estado: "Pendiente" }),
       });
 
       if (!patchResponse.ok) {
