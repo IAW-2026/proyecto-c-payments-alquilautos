@@ -95,7 +95,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
     let matchesDate = true;
     if (selectedDate) {
       const [year, month, day] = selectedDate.split("-");
-      const formattedInputDate = `${day}/${month}/${year}`;
+      const formattedInputDate = `${day}-${month}-${year}`;
       matchesDate = t.fecha.startsWith(formattedInputDate);
     }
 

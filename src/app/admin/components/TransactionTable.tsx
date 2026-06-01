@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Transaction } from "@/types";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatDate } from "@/lib/format";
 import { cancelTransaction } from "../actions";
 
 interface TransactionTableProps {
@@ -26,7 +26,7 @@ export default function TransactionTable({ transactions, approvedPaymentIds, sel
       
       doc.setFontSize(11);
       doc.setTextColor(100);
-      doc.text(`Fecha de generación: ${new Date().toLocaleDateString()}`, 14, 30);
+      doc.text(`Fecha de generación: ${formatDate(new Date())}`, 14, 30);
 
       const tableColumn = ["ID", "Reserva", "Propietario", "Fecha", "Monto", "Estado"];
       const tableRows = transactions.map(t => [

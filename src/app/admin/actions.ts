@@ -5,6 +5,7 @@ import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { notifyApp } from "@/lib/mockWebhooks";
 import { isAdminUser, type ClerkUserForRoleCheck } from "@/lib/admin";
+import { formatDateTime } from "@/lib/format";
 
 function isAdmin(user: Awaited<ReturnType<typeof currentUser>>): boolean {
   return isAdminUser(user as ClerkUserForRoleCheck);
@@ -29,13 +30,7 @@ export async function getTransactions() {
     id_pago: entry.id_pago,
     cliente: `Reserva #${entry.Pago.id_reserva}`,
     vehiculo: `Propietario #${entry.Pago.id_propietario}`,
-    fecha: entry.fecha_hora.toLocaleDateString("es-AR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
+    fecha: formatDateTime(entry.fecha_hora),
     monto: entry.Pago.monto_pagar,
     estado: entry.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
     pagoEstado: entry.Pago.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
@@ -94,8 +89,7 @@ export async function cancelTransaction(id: string) {
     },
   });
 
-  await notifyApp("sellerApp", pago.id_reserva, "Cancelada");
-  await notifyApp("shippingApp", pago.id_reserva, "Cancelada");
+  await notifyApp(pago.id_reserva, "Cancelada");
 
   revalidatePath("/admin");
   return { success: true };

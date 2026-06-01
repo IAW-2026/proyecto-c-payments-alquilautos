@@ -76,8 +76,7 @@ export async function POST(request: Request) {
     // La cancelación la dispara el admin desde la pantalla de transacciones.
     if (nuevoEstado === "Aprobada") {
       const { notifyApp } = await import("@/lib/mockWebhooks");
-      await notifyApp("sellerApp", pagoActualizado.id_reserva, "Aprobada");
-      await notifyApp("shippingApp", pagoActualizado.id_reserva, "Aprobada");
+      await notifyApp(pagoActualizado.id_reserva, "Pagada");
     }
 
     return new NextResponse("OK", { status: 200 });

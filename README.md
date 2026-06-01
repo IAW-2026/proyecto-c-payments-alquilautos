@@ -8,7 +8,7 @@ La aplicación expone una API REST para interactuar de forma segura con el resto
 
 ## Deploy
 
-- **Link de la App (Vercel):** [https://proyecto-c-payments-alquilautos.vercel.app/]
+- **Link de la App (Vercel):** <https://proyecto-c-payments-alquilautos.vercel.app/>
 
 ---
 
@@ -25,7 +25,7 @@ La autenticación y gestión de sesiones está centralizada bajo un único entor
 
 ## Flujo de prueba recomendado
 
-1. Ingresar a [https://proyecto-c-payments-alquilautos.vercel.app/]
+1. Ingresar a <https://proyecto-c-payments-alquilautos.vercel.app/>
 2. Iniciar sesión con `admin@gmail.com` / `soyAdministrador`
 3. Ir a `/checkout/[id_reserva]` para simular un pago
 4. Completar los datos en la zona de test y hacer clic en **"Crear pago de prueba"**
