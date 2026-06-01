@@ -8,7 +8,7 @@ La aplicación expone una API REST para interactuar de forma segura con el resto
 
 ## Deploy
 
-- **Link de la App (Vercel):** [https://proyecto-c-payments-alquilautos-c0lcdch49-ap-abb9dd6f.vercel.app/]
+- **Link de la App (Vercel):** [https://proyecto-c-payments-alquilautos.vercel.app/]
 
 ---
 
@@ -20,9 +20,38 @@ La autenticación y gestión de sesiones está centralizada bajo un único entor
 
 - **Permisos:** Acceso exclusivo al panel de supervisión y analíticas (`/admin`) para la auditoría de cobros globales, métricas y buscador dinámico de transacciones.
 - **Credenciales de prueba:**
-  - **Usuario:** `admin.payments@alquilautos.com` (O el email de tu cuenta de pruebas)
-  - **Contraseña:** [Ingresar contraseña de prueba]
+  - **Usuario:** `admin@gmail.com`
+  - **Contraseña:** soyAdministrador
+
+## Flujo de prueba recomendado
+
+1. Ingresar a [https://proyecto-c-payments-alquilautos.vercel.app/]
+2. Iniciar sesión con `admin@gmail.com` / `soyAdministrador`
+3. Ir a `/checkout/[id_reserva]` para simular un pago
+4. Completar los datos en la zona de test y hacer clic en **"Crear pago de prueba"**
+5. Una vez creado, hacer clic en **"Pagar con Mercado Pago"**
+6. En la pantalla de Mercado Pago, usar los datos de las cuenta de comprador de prueba o la tarjeta de prueba (ver abajo)
+7. Volver a `/admin` para ver la transacción registrada en el panel
 
 ## Consideraciones extra
 
-Para realizar un pago entrar por url a /checkout, esta pantalla es una mockeada que cuando las aplicaciones estén conectadas estará en el front de la aplicación buyerApp, de momento sirve tanto para realizar y validar el funcionamiento de pagos como para disparar endpoints consecuentemente.
+Para realizar un pago entrar por url a `/checkout/[id_reserva]`. Esta pantalla es una versión mockeada que, cuando las aplicaciones estén conectadas, estará en el front de la aplicación buyerApp. De momento sirve tanto para realizar y validar el funcionamiento de pagos como para disparar endpoints consecuentemente.
+
+Antes de apretar pagar, poner los datos en el apartado de test para simular el POST que liga la PaymentsApp con la SellerApp. Recordar revisar que no haya ningún pago con la misma id de reserva en la tabla de transacciones.
+
+### Información para usar MP en modo SandBox
+
+**Cuenta de comprador de prueba:**
+- País: Argentina
+- User ID: 3407519040
+- Usuario: TESTUSER486819439060381846
+- Contraseña: PY7xHg3Hjm
+- Código de verificación: 519040
+
+**Tarjetas de prueba (funcionan en sandbox sin validación):**
+
+| Tipo | Número | CVV | Vencimiento |
+|---|---|---|---|
+| Mastercard | `5031 7557 3453 0604` | `123` | `11/30` |
+
+> **Nota:** El email solicitado en el formulario de pago de Mercado Pago puede ser cualquiera (ej. `test@test.com`), no valida en sandbox.

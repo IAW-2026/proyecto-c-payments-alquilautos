@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
-import Header from "@/components/checkout/Header";
-import Footer from "@/components/checkout/Footer";
-import AdminHeader from "./components/AdminHeader";
-import StatCard from "./components/StatCard";
-import TransactionTable from "./components/TransactionTable";
-import { formatCurrency, Transaction } from "./constants";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import AdminHeader from "./AdminHeader";
+import StatCard from "./StatCard";
+import TransactionTable from "./TransactionTable";
+import { formatCurrency } from "@/lib/format";
 import { isAdminUser } from "@/lib/admin";
+import type { Transaction } from "@/types";
 
 interface AdminDashboardProps {
   transactions: Transaction[];
@@ -105,7 +106,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
     <div className="admin-layout">
       <Header />
 
-      <div className="admin-container">
+      <main className="admin-container">
         <AdminHeader
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -136,7 +137,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
           onDateChange={setSelectedDate}
           onDeleteTransaction={() => router.refresh()}
         />
-      </div>
+      </main>
       <Footer />
     </div>
   );

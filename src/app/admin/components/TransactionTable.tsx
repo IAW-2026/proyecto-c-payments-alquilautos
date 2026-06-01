@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { Transaction, getEstadoStyle, formatCurrency } from "../constants";
+import { Transaction } from "@/types";
+import { formatCurrency } from "@/lib/format";
 import { cancelTransaction } from "../actions";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -16,8 +14,10 @@ interface TransactionTableProps {
 export default function TransactionTable({ transactions, approvedPaymentIds, selectedDate, onDateChange, onDeleteTransaction }: TransactionTableProps) {
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     try {
+      const jsPDF = (await import("jspdf")).default;
+      const autoTable = (await import("jspdf-autotable")).default;
       const doc = new jsPDF();
       
       // Título del reporte
@@ -55,8 +55,9 @@ export default function TransactionTable({ transactions, approvedPaymentIds, sel
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     try {
+      const XLSX = await import("xlsx");
       const wsData = transactions.map(t => ({
         ID: t.id,
         Reserva: t.cliente,
@@ -70,14 +71,13 @@ export default function TransactionTable({ transactions, approvedPaymentIds, sel
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
 
-      // Ajustar ancho de columnas automáticamente
       const colWidths = [
-        { wch: 8 },   // ID
-        { wch: 15 },  // Reserva
-        { wch: 18 },  // Propietario
-        { wch: 14 },  // Fecha
-        { wch: 16 },  // Monto
-        { wch: 14 },  // Estado
+        { wch: 8 },
+        { wch: 15 },
+        { wch: 18 },
+        { wch: 14 },
+        { wch: 16 },
+        { wch: 14 },
       ];
       ws["!cols"] = colWidths;
 
@@ -160,7 +160,6 @@ export default function TransactionTable({ transactions, approvedPaymentIds, sel
                   <td className="admin-table-td">
                     <span
                       className={`admin-status-badge admin-status-${t.estado}`}
-                      style={getEstadoStyle(t.estado)}
                     >
                       {t.estado}
                     </span>

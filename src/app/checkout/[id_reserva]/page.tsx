@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/checkout/Header";
-import Footer from "@/components/checkout/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { useParams } from "next/navigation";
 
 export default function CheckoutPage() {
@@ -109,7 +109,7 @@ export default function CheckoutPage() {
         </button>
 
         {!pagoCreado && (
-          <p className="checkout-test-hint" style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginTop: "-1rem" }}>
+          <p className="checkout-test-hint">
             Creá un pago de prueba abajo para habilitar el botón
           </p>
         )}
@@ -119,8 +119,9 @@ export default function CheckoutPage() {
 
           <div className="checkout-test-form">
             <div className="checkout-test-field">
-              <label>Monto *</label>
+              <label htmlFor="monto">Monto *</label>
               <input
+                id="monto"
                 type="number"
                 step="0.01"
                 placeholder="15000.00"
@@ -131,8 +132,9 @@ export default function CheckoutPage() {
             </div>
 
             <div className="checkout-test-field">
-              <label>ID Alquilador</label>
+              <label htmlFor="id-alquilador">ID Alquilador</label>
               <input
+                id="id-alquilador"
                 type="number"
                 placeholder="0"
                 value={testAlquilador}
@@ -142,8 +144,9 @@ export default function CheckoutPage() {
             </div>
 
             <div className="checkout-test-field">
-              <label>ID Propietario</label>
+              <label htmlFor="id-propietario">ID Propietario</label>
               <input
+                id="id-propietario"
                 type="number"
                 placeholder="0"
                 value={testPropietario}

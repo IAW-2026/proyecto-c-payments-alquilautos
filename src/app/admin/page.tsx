@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
 import { getTransactions } from "./actions";
-import AdminDashboard from "./AdminDashboard";
+import AdminDashboard from "./components/AdminDashboard";
 import { isAdminUser } from "@/lib/admin";
 
 export default async function AdminPanel() {

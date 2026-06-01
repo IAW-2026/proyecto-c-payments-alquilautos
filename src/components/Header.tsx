@@ -1,5 +1,3 @@
-// src/components/checkout/Header.tsx
-
 export default function Header() {
   return (
     <header className="checkout-header">

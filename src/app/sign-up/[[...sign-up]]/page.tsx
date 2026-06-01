@@ -2,7 +2,7 @@ import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
   return (
-    <div className="auth-layout">
+    <main className="auth-layout">
       <div className="auth-container">
         <div className="auth-header">
           <span className="auth-tagline">Plataforma de Pagos</span>
@@ -16,6 +16,6 @@ export default function SignUpPage() {
           <SignUp />
         </div>
       </div>
-    </div>
+    </main>
   );
 }

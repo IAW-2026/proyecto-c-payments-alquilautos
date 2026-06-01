@@ -1,5 +1,3 @@
-// src/components/checkout/Footer.tsx
-
 export default function Footer() {
   return (
     <footer className="checkout-footer">

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Header from "@/components/checkout/Header";
-import Footer from "@/components/checkout/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (

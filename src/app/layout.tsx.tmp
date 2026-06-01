@@ -30,9 +30,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${cormorant.variable} ${dmSans.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://clerk.accounts.dev" />
-      </head>
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }} localization={esES}>
           {children}
