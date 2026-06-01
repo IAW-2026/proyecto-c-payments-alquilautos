@@ -20,8 +20,8 @@ La autenticación y gestión de sesiones está centralizada bajo un único entor
 
 - **Permisos:** Acceso exclusivo al panel de supervisión y analíticas (`/admin`) para la auditoría de cobros globales, métricas y buscador dinámico de transacciones.
 - **Credenciales de prueba:**
-  - **Usuario:** `admin@gmail.com`
-  - **Contraseña:** soyAdministrador
+  - **Usuario:** `paymentsAdmin+clerk_test@iaw.com`
+  - **Contraseña:** iawuser#
 
 ## Flujo de prueba recomendado
 
@@ -57,3 +57,4 @@ Además es recomendable probar la integración de Mercado Pago en incógnito deb
 | Mastercard | `5031 7557 3453 0604` | `123` | `11/30` |
 
 > **Nota:** El email solicitado en el formulario de pago de Mercado Pago puede ser cualquiera (ej. `test@test.com`), no valida en sandbox.
+>>>>>>> develop
