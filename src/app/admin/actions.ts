@@ -38,6 +38,7 @@ export async function getTransactions() {
     }),
     monto: entry.Pago.monto_pagar,
     estado: entry.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
+    pagoEstado: entry.Pago.estado as "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada",
     iniciales: "R" as const,
     color: "#6366f1" as const,
   }));

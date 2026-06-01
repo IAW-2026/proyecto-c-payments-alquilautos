@@ -8,4 +8,5 @@ export interface Transaction {
   fecha: string;
   monto: number;
   estado: "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada";
+  pagoEstado: "Aprobada" | "Pendiente" | "Cancelada" | "Coordinada";
 }

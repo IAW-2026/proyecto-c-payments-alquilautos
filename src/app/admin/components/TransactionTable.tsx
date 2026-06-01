@@ -163,7 +163,7 @@ export default function TransactionTable({ transactions, approvedPaymentIds, sel
                     >
                       {t.estado}
                     </span>
-                    {(t.estado === "Pendiente" || t.estado === "Coordinada") && !approvedPaymentIds.has(t.id_pago) && (
+                    {(t.pagoEstado === "Pendiente" || t.pagoEstado === "Coordinada") && !approvedPaymentIds.has(t.id_pago) && (
                       <button
                         onClick={() => handleDelete(t.id_pago)}
                         disabled={deletingId === t.id_pago}

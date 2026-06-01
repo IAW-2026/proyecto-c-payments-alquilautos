@@ -39,7 +39,9 @@ Para realizar un pago entrar por url a `/checkout/[id_reserva]`. Esta pantalla e
 
 Antes de apretar pagar, poner los datos en el apartado de test para simular el POST que liga la PaymentsApp con la SellerApp. Recordar revisar que no haya ningún pago con la misma id de reserva en la tabla de transacciones.
 
-### Información para usar MP en modo SandBox
+Además es recomendable probar la integración de Mercado Pago en incógnito debido a que podria reconocer una cuenta existente en la computadora no compatible con el modo sandbox.
+
+### Información para usar MP en modo Sandbox
 
 **Cuenta de comprador de prueba:**
 - País: Argentina
