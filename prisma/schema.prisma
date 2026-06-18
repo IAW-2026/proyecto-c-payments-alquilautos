@@ -13,7 +13,7 @@ model Pago {
   id_propietario      Int
   monto_pagar         Float
   fecha               DateTime              @default(now())
-  estado              String                @default("Pendiente")
+  estado              String                @default("Coordinado")
   link_pago           String?
   HistorialEstadoPago HistorialEstadoPago[]
 }

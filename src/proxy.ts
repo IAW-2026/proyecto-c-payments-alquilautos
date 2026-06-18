@@ -3,7 +3,8 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // Protegemos el panel de administración y sus endpoints de API
 const isProtectedRoute = createRouteMatcher([
   "/admin(.*)",
-  "/api/admin(.*)"
+  "/api/admin(.*)",
+  "/api/pago(.*)"
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
