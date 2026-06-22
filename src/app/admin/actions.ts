@@ -3,7 +3,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { notifyApp } from "@/lib/mockWebhooks";
+import { notificarSellerApp } from "@/lib/notificadorSeller";
 import { isAdminUser, type ClerkUserForRoleCheck } from "@/lib/admin";
 import { formatDateTime } from "@/lib/format";
 
@@ -89,7 +89,7 @@ export async function cancelTransaction(id: string) {
     },
   });
 
-  await notifyApp(pago.id_reserva, "Cancelada");
+  await notificarSellerApp(pago.id_reserva, "Cancelada");
 
   revalidatePath("/admin");
   return { success: true };

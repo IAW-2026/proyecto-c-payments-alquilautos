@@ -88,8 +88,8 @@ export async function POST(request: Request) {
     // Solo se notifica cuando MP aprueba el pago.
     // La cancelación la dispara el admin desde la pantalla de transacciones.
     if (nuevoEstado === "Pagada") {
-      const { notifyApp } = await import("@/lib/mockWebhooks");
-      await notifyApp(pagoActualizado.id_reserva, "Pagada");
+      const { notificarSellerApp } = await import("@/lib/notificadorSeller");
+      await notificarSellerApp(pagoActualizado.id_reserva, "Pagada");
     }
 
     return new NextResponse("OK", { status: 200 });

@@ -68,7 +68,6 @@ export async function POST(request: Request) {
       success: true,
       id_pago: nuevoPago.id_pago,
       id_reserva: nuevoPago.id_reserva,
-      link_pago,
     });
   } catch (error: unknown) {
     console.error("Error al crear pago:", error);
