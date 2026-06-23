@@ -96,6 +96,29 @@ export async function cancelTransaction(id: string) {
   return { success: true };
 }
 
+type Cotizaciones = Record<"USD" | "EUR" | "GBP", number>;
+
+const cotizacionCache = { valor: {} as Cotizaciones, timestamp: 0 };
+
+export async function getCotizacion(): Promise<Cotizaciones> {
+  if (Date.now() - cotizacionCache.timestamp < 300_000) return cotizacionCache.valor;
+
+  const fallback: Cotizaciones = { USD: 1200, EUR: 1300, GBP: 1500 };
+  try {
+    const res = await fetch("https://api.frankfurter.app/latest?from=ARS&to=USD,EUR,GBP");
+    const data = await res.json();
+    cotizacionCache.valor = {
+      USD: 1 / data.rates.USD,
+      EUR: 1 / data.rates.EUR,
+      GBP: 1 / data.rates.GBP,
+    };
+    cotizacionCache.timestamp = Date.now();
+  } catch {
+    cotizacionCache.valor = fallback;
+  }
+  return cotizacionCache.valor;
+}
+
 export async function getSalesStats() {
   const user = await currentUser();
   if (!isAdmin(user)) {

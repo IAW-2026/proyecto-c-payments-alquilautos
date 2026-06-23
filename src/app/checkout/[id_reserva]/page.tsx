@@ -92,7 +92,7 @@ export default function CheckoutPage() {
       <Header />
 
       <div className="flex flex-col items-center justify-center py-20 px-8 gap-8 max-md:py-12 max-md:px-6 max-sm:py-6 max-sm:px-4 max-sm:gap-5">
-        <h2 className="font-display text-3xl max-md:text-[1.75rem] max-sm:text-[1.35rem]">Finalizar Pago</h2>
+        <h2 className="font-display text-3xl text-text-primary max-md:text-[1.75rem] max-sm:text-[1.35rem]">Finalizar Pago</h2>
         <p className="text-text-secondary text-center max-w-[400px] max-sm:text-[0.85rem]">
           Reserva ID: <strong>{id_reserva}</strong>
         </p>
@@ -102,7 +102,7 @@ export default function CheckoutPage() {
 
         <div className="max-w-[300px] w-full">
           <button
-            className="w-full py-[0.9rem] px-6 bg-brand text-white font-sans text-[0.9375rem] font-semibold tracking-wider border-none rounded-xl cursor-pointer shadow-btn transition-all duration-150 hover:bg-brand-hover hover:shadow-[0_4px_18px_rgba(29,185,84,0.45)] hover:-translate-y-px active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-[0.9rem] px-6 bg-brand text-white font-sans text-[0.9375rem] font-semibold tracking-wider border-none rounded-xl cursor-pointer shadow-btn transition-all duration-150 hover:bg-brand-hover hover:shadow-btn-hover hover:-translate-y-px active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed"
             onClick={handlePay}
             disabled={loading || !pagoCreado}
           >
@@ -132,7 +132,7 @@ export default function CheckoutPage() {
                 value={testMonto}
                 onChange={(e) => setTestMonto(e.target.value)}
                 disabled={pagoCreado}
-                className="py-[0.6rem] px-3 border border-border rounded-lg font-sans text-[0.9rem] outline-none transition-colors focus:border-brand"
+                className="py-[0.6rem] px-3 border border-border rounded-lg font-sans text-[0.9rem] text-text-primary outline-none transition-colors focus:border-brand"
               />
             </div>
 
@@ -145,7 +145,7 @@ export default function CheckoutPage() {
                 value={testAlquilador}
                 onChange={(e) => setTestAlquilador(e.target.value)}
                 disabled={pagoCreado}
-                className="py-[0.6rem] px-3 border border-border rounded-lg font-sans text-[0.9rem] outline-none transition-colors focus:border-brand"
+                className="py-[0.6rem] px-3 border border-border rounded-lg font-sans text-[0.9rem] text-text-primary outline-none transition-colors focus:border-brand"
               />
             </div>
 
@@ -158,7 +158,7 @@ export default function CheckoutPage() {
                 value={testPropietario}
                 onChange={(e) => setTestPropietario(e.target.value)}
                 disabled={pagoCreado}
-                className="py-[0.6rem] px-3 border border-border rounded-lg font-sans text-[0.9rem] outline-none transition-colors focus:border-brand"
+                className="py-[0.6rem] px-3 border border-border rounded-lg font-sans text-[0.9rem] text-text-primary outline-none transition-colors focus:border-brand"
               />
             </div>
 
@@ -171,7 +171,7 @@ export default function CheckoutPage() {
                 {creando ? "Creando..." : "Crear pago de prueba"}
               </button>
             ) : (
-              <div className="flex items-center justify-between py-[0.65rem] px-3 bg-brand-light rounded-lg text-[0.85rem] font-semibold text-brand-hover">
+              <div className="flex items-center justify-between py-[0.65rem] px-3 bg-brand-light rounded-lg text-[0.85rem] font-semibold text-brand">
                 <span>&check; Pago creado correctamente</span>
                 <button
                   className="bg-transparent text-brand border border-brand text-[0.8rem] hover:bg-brand-light py-[0.65rem] px-4 font-sans font-semibold rounded-lg cursor-pointer transition-colors"

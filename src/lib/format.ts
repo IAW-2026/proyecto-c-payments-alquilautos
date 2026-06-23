@@ -1,5 +1,7 @@
-export function formatCurrency(n: number) {
-  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 2 }).format(n);
+export type Moneda = "ARS" | "USD" | "EUR" | "GBP";
+
+export function formatCurrency(n: number, currency: Moneda = "ARS") {
+  return new Intl.NumberFormat("es-AR", { style: "currency", currency, minimumFractionDigits: 2 }).format(n);
 }
 
 export function formatDate(d: Date) {

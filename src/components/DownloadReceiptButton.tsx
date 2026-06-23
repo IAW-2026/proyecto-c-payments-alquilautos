@@ -143,7 +143,7 @@ export default function DownloadReceiptButton({ transaction }: DownloadReceiptBu
     <button
       onClick={handleDownload}
       title="Descargar comprobante"
-      className="flex items-center justify-center w-7 h-7 rounded-full cursor-pointer bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0] transition-colors hover:bg-[#dcfce7]"
+      className="flex items-center justify-center w-7 h-7 rounded-full cursor-pointer bg-brand-light text-brand border border-brand/20 transition-colors hover:brightness-95"
     >
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

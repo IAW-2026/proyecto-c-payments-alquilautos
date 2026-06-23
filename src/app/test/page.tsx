@@ -108,14 +108,14 @@ export default function TestPage() {
     <main className="min-h-dvh bg-bg p-8 max-sm:p-4">
       <div className="max-w-2xl mx-auto space-y-8">
         <div>
-          <h1 className="font-display text-3xl">Test de Integración</h1>
+          <h1 className="font-display text-3xl text-text-primary">Test de Integración</h1>
           <p className="text-text-secondary mt-1">
             Simulá el flujo completo: Seller App → POST → GET link → PATCH
           </p>
         </div>
 
         <section className="bg-surface rounded-xl p-6 shadow-card space-y-4">
-          <h2 className="font-display text-xl">1. Seller crea un pago (POST /api/pago)</h2>
+          <h2 className="font-display text-xl text-text-primary">1. Seller crea un pago (POST /api/pago)</h2>
 
           <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
             <Input label="ID Reserva *" value={idReserva} onChange={setIdReserva} />
@@ -142,7 +142,7 @@ export default function TestPage() {
         </section>
 
         <section className="bg-surface rounded-xl p-6 shadow-card space-y-4">
-          <h2 className="font-display text-xl">2. Buyer obtiene link (GET /api/pago/link)</h2>
+          <h2 className="font-display text-xl text-text-primary">2. Buyer obtiene link (GET /api/pago/link)</h2>
           <button
             className="w-full py-3 px-6 bg-brand text-white font-semibold rounded-xl cursor-pointer hover:bg-brand-hover disabled:opacity-60 transition-colors"
             onClick={obtenerLink}
@@ -162,7 +162,7 @@ export default function TestPage() {
         </section>
 
         <section className="bg-surface rounded-xl p-6 shadow-card space-y-4">
-          <h2 className="font-display text-xl">3. Buyer inicia pago (PATCH /api/pago/[id])</h2>
+          <h2 className="font-display text-xl text-text-primary">3. Buyer inicia pago (PATCH /api/pago/[id])</h2>
           <p className="text-text-secondary text-sm">Cambia estado de Coordinada a Pendiente</p>
           <button
             className="w-full py-3 px-6 bg-brand text-white font-semibold rounded-xl cursor-pointer hover:bg-brand-hover disabled:opacity-60 transition-colors"
@@ -180,7 +180,7 @@ export default function TestPage() {
         </section>
 
         <section className="bg-surface rounded-xl p-6 shadow-card">
-          <h2 className="font-display text-xl mb-2">Log</h2>
+          <h2 className="font-display text-xl mb-2 text-text-primary">Log</h2>
           <pre className="bg-[#111] text-green-400 p-4 rounded-lg text-xs min-h-[60px] whitespace-pre-wrap font-mono">
             {error || "Sin errores"}
           </pre>
@@ -208,7 +208,7 @@ function Input({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="py-2 px-3 border border-border rounded-lg text-sm outline-none focus:border-brand transition-colors"
+        className="py-2 px-3 border border-border rounded-lg text-sm text-text-primary outline-none focus:border-brand transition-colors"
       />
     </div>
   );

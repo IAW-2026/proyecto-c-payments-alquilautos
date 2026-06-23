@@ -51,7 +51,7 @@ export default function ExportPDFButton({ transactions }: ExportPDFButtonProps) 
   return (
     <button
       onClick={handleExport}
-      className="inline-flex items-center gap-[0.4rem] py-[0.45rem] px-[0.875rem] border border-border rounded-lg bg-[#1f2937] text-white text-[0.8125rem] cursor-pointer transition-opacity hover:opacity-90 max-sm:text-[0.7rem] max-sm:py-[0.3rem] max-sm:px-2"
+      className="inline-flex items-center gap-[0.4rem] py-[0.45rem] px-[0.875rem] border rounded-lg bg-[#dc2626] border-[#dc2626] text-white text-[0.8125rem] cursor-pointer transition-opacity hover:opacity-90 hover:bg-[#b91c1c] max-sm:text-[0.7rem] max-sm:py-[0.3rem] max-sm:px-2"
     >
       Exportar PDF
     </button>

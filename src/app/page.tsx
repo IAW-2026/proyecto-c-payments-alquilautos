@@ -20,7 +20,7 @@ export default function Home() {
 
         <div className="flex gap-6 flex-wrap justify-center animate-fade-up max-sm:gap-4">
           <Link href="/admin">
-            <button className="min-w-[220px] py-[1.2rem] px-12 bg-white text-black border-none shadow-[0_10px_20px_rgba(255,255,255,0.1)] rounded-xl font-sans text-lg font-semibold tracking-wider cursor-pointer transition-all duration-150 hover:opacity-90 max-sm:min-w-full max-sm:w-full max-sm:py-4 max-sm:px-8 max-sm:text-base">
+            <button className="min-w-[220px] py-[1.2rem] px-12 bg-surface text-text-primary border-none shadow-[0_10px_20px_rgba(255,255,255,0.1)] rounded-xl font-sans text-lg font-semibold tracking-wider cursor-pointer transition-all duration-150 hover:opacity-90 max-sm:min-w-full max-sm:w-full max-sm:py-4 max-sm:px-8 max-sm:text-base">
               Ingresar
             </button>
           </Link>
