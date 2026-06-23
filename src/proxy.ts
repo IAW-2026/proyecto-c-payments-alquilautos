@@ -10,11 +10,20 @@ const isProtectedRoute = createRouteMatcher([
 // Las rutas públicas de test y las que pueden usar API Key como alternativa a Clerk
 const isTestRoute = createRouteMatcher(["/test(.*)"]);
 const isSellerRoute = createRouteMatcher(["/api/pago(.*)"]);
+const isAnalyticsRoute = createRouteMatcher(["/api/analytics(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Páginas de test no requieren autenticación
   if (isTestRoute(req)) {
     return;
+  }
+
+  // GET /api/analytics puede autenticarse con x-api-key (sistema de analytics externo)
+  if (isAnalyticsRoute(req) && req.method === "GET") {
+    const apiKey = req.headers.get("x-api-key");
+    if (apiKey && apiKey === process.env.ANALYTICS_API_KEY) {
+      return;
+    }
   }
 
   // POST /api/pago puede autenticarse con x-api-key (seller app)
