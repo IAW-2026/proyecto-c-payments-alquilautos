@@ -28,6 +28,7 @@ export async function getTransactions() {
   const transactions = historial.map((entry) => ({
     id: String(entry.id_historial_estado_pago),
     id_pago: entry.id_pago,
+    id_reserva: entry.Pago.id_reserva,
     cliente: `Reserva #${entry.Pago.id_reserva}`,
     vehiculo: `Propietario #${entry.Pago.id_propietario}`,
     fecha: formatDateTime(entry.fecha_hora),
@@ -93,4 +94,59 @@ export async function cancelTransaction(id: string) {
 
   revalidatePath("/admin");
   return { success: true };
+}
+
+export async function getSalesStats() {
+  const user = await currentUser();
+  if (!isAdmin(user)) {
+    throw new Error("No autorizado");
+  }
+
+  const pagos = await db.pago.findMany({
+    where: { estado: "Pagada" },
+    orderBy: { fecha: "asc" },
+  });
+
+  const ventasPorDia = new Map<string, number>();
+  const ventasPorMes = new Map<string, number>();
+
+  for (const p of pagos) {
+    const dia = p.fecha.toLocaleDateString("es-AR", {
+      timeZone: "UTC",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).replace(/\//g, "-");
+
+    const mes = p.fecha.toLocaleDateString("es-AR", {
+      timeZone: "UTC",
+      month: "long",
+      year: "numeric",
+    });
+
+    ventasPorDia.set(dia, (ventasPorDia.get(dia) || 0) + p.monto_pagar);
+    ventasPorMes.set(mes, (ventasPorMes.get(mes) || 0) + p.monto_pagar);
+  }
+
+  const ventasPorSemana = new Map<string, number>();
+  for (const p of pagos) {
+    const d = new Date(p.fecha);
+    const diaSemana = d.getUTCDay();
+    const diff = d.getUTCDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
+    const lunes = new Date(d);
+    lunes.setUTCDate(diff);
+    const clave = lunes.toLocaleDateString("es-AR", {
+      timeZone: "UTC",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).replace(/\//g, "-");
+    ventasPorSemana.set(clave, (ventasPorSemana.get(clave) || 0) + p.monto_pagar);
+  }
+
+  return {
+    ventasPorDia: Array.from(ventasPorDia, ([fecha, monto]) => ({ fecha, monto })),
+    ventasPorSemana: Array.from(ventasPorSemana, ([fecha, monto]) => ({ fecha, monto })),
+    ventasPorMes: Array.from(ventasPorMes, ([fecha, monto]) => ({ fecha, monto })),
+  };
 }

@@ -6,6 +6,7 @@ import { cancelTransaction } from "../actions";
 import ExportPDFButton from "@/components/ExportPDFButton";
 import ExportExcelButton from "@/components/ExportExcelButton";
 import CancelButton from "@/components/CancelButton";
+import DownloadReceiptButton from "@/components/DownloadReceiptButton";
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -80,6 +81,18 @@ export default function TransactionTable({ transactions, approvedPaymentIds, sel
                       <span className={`py-[3px] px-[10px] rounded-full text-[0.75rem] font-semibold max-sm:text-[0.6rem] max-sm:py-px max-sm:px-[5px] ${getStatusClasses(t.estado)}`}>
                         {t.estado}
                       </span>
+                      {t.estado === "Pagada" && (
+                        <DownloadReceiptButton
+                          transaction={{
+                            id_pago: t.id_pago,
+                            id_reserva: t.id_reserva,
+                            cliente: t.cliente,
+                            monto: t.monto,
+                            fecha: t.fecha,
+                            vehiculo: t.vehiculo,
+                          }}
+                        />
+                      )}
                       {(t.pagoEstado === "Pendiente" || t.pagoEstado === "Coordinada") && !approvedPaymentIds.has(t.id_pago) && (
                         <CancelButton
                           idPago={t.id_pago}
