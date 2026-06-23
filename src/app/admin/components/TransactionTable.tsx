@@ -1,7 +1,12 @@
-import { useState } from "react";
+"use client";
+
 import { Transaction } from "@/types";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 import { cancelTransaction } from "../actions";
+import ExportPDFButton from "@/components/ExportPDFButton";
+import ExportExcelButton from "@/components/ExportExcelButton";
+import CancelButton from "@/components/CancelButton";
+import DownloadReceiptButton from "@/components/DownloadReceiptButton";
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -11,182 +16,96 @@ interface TransactionTableProps {
   onDeleteTransaction: (id_pago: number) => void;
 }
 
+function getStatusClasses(estado: string) {
+  const map: Record<string, string> = {
+    Pagada: "bg-[#f3e8ff] text-[#9333ea]",
+    Pendiente: "bg-[#fef9c3] text-[#a16207]",
+    Cancelada: "bg-[#fee2e2] text-[#dc2626]",
+    Coordinada: "bg-[#dbeafe] text-[#1d4ed8]",
+  };
+  return map[estado] || "bg-gray-100 text-gray-600";
+}
+
 export default function TransactionTable({ transactions, approvedPaymentIds, selectedDate, onDateChange, onDeleteTransaction }: TransactionTableProps) {
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-
-  const exportToPDF = async () => {
-    try {
-      const jsPDF = (await import("jspdf")).default;
-      const autoTable = (await import("jspdf-autotable")).default;
-      const doc = new jsPDF();
-      
-      // Título del reporte
-      doc.setFontSize(18);
-      doc.text("Reporte de Transacciones - PaymentsApp", 14, 22);
-      
-      doc.setFontSize(11);
-      doc.setTextColor(100);
-      doc.text(`Fecha de generación: ${formatDate(new Date())}`, 14, 30);
-
-      const tableColumn = ["ID", "Reserva", "Propietario", "Fecha", "Monto", "Estado"];
-      const tableRows = transactions.map(t => [
-        t.id,
-        t.cliente,
-        t.vehiculo,
-        t.fecha,
-        formatCurrency(t.monto),
-        t.estado
-      ]);
-
-      autoTable(doc, {
-        head: [tableColumn],
-        body: tableRows,
-        startY: 40,
-        theme: "grid",
-        headStyles: { fillColor: [31, 41, 55], textColor: [255, 255, 255], fontStyle: "bold" },
-        styles: { fontSize: 9, cellPadding: 3 },
-        alternateRowStyles: { fillColor: [249, 250, 251] }
-      });
-
-      doc.save(`reporte_pagos_${new Date().getTime()}.pdf`);
-    } catch (error) {
-      console.error("Error al exportar PDF:", error);
-      alert("No se pudo generar el PDF. Por favor, intente de nuevo.");
-    }
-  };
-
-  const exportToExcel = async () => {
-    try {
-      const XLSX = await import("xlsx");
-      const wsData = transactions.map(t => ({
-        ID: t.id,
-        Reserva: t.cliente,
-        Propietario: t.vehiculo,
-        Fecha: t.fecha,
-        Monto: formatCurrency(t.monto),
-        Estado: t.estado,
-      }));
-
-      const ws = XLSX.utils.json_to_sheet(wsData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
-
-      const colWidths = [
-        { wch: 8 },
-        { wch: 15 },
-        { wch: 18 },
-        { wch: 14 },
-        { wch: 16 },
-        { wch: 14 },
-      ];
-      ws["!cols"] = colWidths;
-
-      XLSX.writeFile(wb, `reporte_pagos_${new Date().getTime()}.xlsx`);
-    } catch (error) {
-      console.error("Error al exportar Excel:", error);
-      alert("No se pudo generar el Excel. Por favor, intente de nuevo.");
-    }
-  };
-
-  const handleDelete = async (id_pago: number) => {
-    if (!confirm("¿Estás seguro de cancelar esta transacción?")) return;
-    
-    setDeletingId(id_pago);
-    try {
-      await cancelTransaction(String(id_pago));
-      onDeleteTransaction(id_pago);
-    } catch (error) {
-      console.error("Error al cancelar transacción:", error);
-      alert(error instanceof Error ? error.message : "No se pudo cancelar la transacción. Por favor, intente de nuevo.");
-    } finally {
-      setDeletingId(null);
-    }
+  const handleCancel = async (idPago: number) => {
+    await cancelTransaction(String(idPago));
+    onDeleteTransaction(idPago);
   };
 
   return (
-    <div className="admin-table-card">
-      <div className="admin-table-header">
-        <span className="admin-table-title">Transacciones</span>
-        <div className="admin-table-actions">
-          <div className="admin-date-filter-wrapper">
+    <div className="bg-surface border border-border rounded-2xl shadow-card overflow-hidden flex-1">
+      <div className="flex items-center justify-between py-5 px-7 border-b border-border-light flex-wrap gap-4 max-md:flex-col max-md:items-stretch max-md:p-4 max-md:gap-3 max-sm:p-2">
+        <span className="font-semibold text-text-primary max-sm:text-[0.85rem]">Transacciones</span>
+        <div className="flex gap-3 max-md:flex-wrap max-md:gap-2">
+          <div className="flex items-center gap-2 border border-border rounded-lg py-[0.4rem] px-3 bg-surface max-sm:py-1 max-sm:px-[0.4rem]">
             <input 
               type="date" 
               value={selectedDate}
               onChange={(e) => onDateChange(e.target.value)}
-              className="admin-date-filter-input"
+              className="border-none outline-none text-[0.8125rem] text-text-primary cursor-pointer max-sm:text-[0.7rem] max-sm:max-w-[100px]"
             />
             {selectedDate && (
-              <button onClick={() => onDateChange("")} className="admin-date-clear-btn">✕</button>
+              <button onClick={() => onDateChange("")} className="bg-none border-none text-text-muted cursor-pointer text-[0.8rem]">✕</button>
             )}
           </div>
-          <button 
-            onClick={exportToExcel}
-            className="admin-export-btn admin-export-excel-btn"
-          >
-            Exportar Excel
-          </button>
-          <button 
-            onClick={exportToPDF}
-            className="admin-export-btn"
-          >
-            Exportar PDF
-          </button>
+          <ExportExcelButton transactions={transactions} />
+          <ExportPDFButton transactions={transactions} />
         </div>
       </div>
 
-      <div className="admin-table-scroll-container custom-scroll">
-        <table className="admin-table">
+      <div className="max-h-[450px] overflow-y-auto overflow-x-auto custom-scroll">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="admin-table-head-row">
+            <tr className="bg-bg">
               {["ID", "Reserva", "Propietario", "Fecha", "Monto", "Estado"].map((h) => (
-                <th key={h} className="admin-table-th sticky-header">{h}</th>
+                <th key={h} className="py-3 px-7 text-center text-[0.72rem] font-semibold uppercase text-text-muted border-b border-border-light sticky top-0 z-10 bg-bg max-md:py-2 max-md:px-4 max-md:text-[0.65rem] max-sm:py-[0.3rem] max-sm:px-[0.4rem] max-sm:text-[0.55rem] max-sm:tracking-wider">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {transactions.length > 0 ? (
               transactions.map((t) => (
-                <tr key={t.id} className="admin-table-tr">
-                  <td className="admin-table-td-id">{t.id}</td>
-                  <td className="admin-table-td">
-                    <div className="admin-client-info">
-                      <span className="admin-client-avatar" style={{ background: t.color }}>{t.iniciales}</span>
-                      <span className="admin-client-name">{t.cliente}</span>
+                <tr key={t.id} className="border-b border-border-light">
+                  <td className="py-4 px-7 font-mono text-[0.8rem] text-text-primary text-center max-md:py-3 max-md:px-4 max-sm:py-[0.4rem] max-sm:px-[0.4rem] max-sm:text-[0.65rem]">{t.id}</td>
+                  <td className="py-4 px-7 text-center max-md:py-3 max-md:px-4 max-sm:py-[0.4rem] max-sm:px-[0.4rem] max-sm:text-[0.7rem]">
+                    <div className="flex items-center justify-center gap-[0.625rem] max-sm:gap-[0.375rem]">
+                      <span className="w-7 h-7 rounded-full flex items-center justify-center text-[0.7rem] text-white max-md:hidden" style={{ background: t.color }}>{t.iniciales}</span>
+                      <span className="text-[0.875rem] font-medium text-text-primary max-sm:text-[0.7rem]">{t.cliente}</span>
                     </div>
                   </td>
-                  <td className="admin-table-td-vehicle">{t.vehiculo}</td>
-                  <td className="admin-table-td-date">{t.fecha}</td>
-                  <td className="admin-table-td-amount">{formatCurrency(t.monto)}</td>
-                  <td className="admin-table-td">
-                    <span
-                      className={`admin-status-badge admin-status-${t.estado}`}
-                    >
-                      {t.estado}
-                    </span>
-                    {(t.pagoEstado === "Pendiente" || t.pagoEstado === "Coordinada") && !approvedPaymentIds.has(t.id_pago) && (
-                      <button
-                        onClick={() => handleDelete(t.id_pago)}
-                        disabled={deletingId === t.id_pago}
-                        className="admin-delete-btn"
-                        title="Cancelar transacción"
-                      >
-                        {deletingId === t.id_pago ? (
-                          "..."
-                        ) : (
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
-                          </svg>
-                        )}
-                      </button>
-                    )}
+                  <td className="py-4 px-7 text-[0.875rem] text-text-primary text-center max-md:py-3 max-md:px-4 max-sm:py-[0.4rem] max-sm:px-[0.4rem] max-sm:text-[0.7rem]">{t.vehiculo}</td>
+                  <td className="py-4 px-7 text-[0.875rem] text-text-secondary text-center max-md:py-3 max-md:px-4 max-sm:py-[0.4rem] max-sm:px-[0.4rem] max-sm:text-[0.7rem]">{t.fecha}</td>
+                  <td className="py-4 px-7 text-[0.875rem] font-semibold text-text-primary text-center max-md:py-3 max-md:px-4 max-sm:py-[0.4rem] max-sm:px-[0.4rem] max-sm:text-[0.7rem]">{formatCurrency(t.monto)}</td>
+                  <td className="py-4 px-7 text-center max-md:py-3 max-md:px-4 max-sm:py-[0.4rem] max-sm:px-[0.4rem]">
+                    <div className="flex items-center justify-center gap-2">
+                      <span className={`py-[3px] px-[10px] rounded-full text-[0.75rem] font-semibold uppercase max-sm:text-[0.6rem] max-sm:py-px max-sm:px-[5px] ${getStatusClasses(t.estado)}`}>
+                        {t.estado}
+                      </span>
+                      {t.estado === "Pagada" && (
+                        <DownloadReceiptButton
+                          transaction={{
+                            id_pago: t.id_pago,
+                            id_reserva: t.id_reserva,
+                            cliente: t.cliente,
+                            monto: t.monto,
+                            fecha: t.fecha,
+                            vehiculo: t.vehiculo,
+                          }}
+                        />
+                      )}
+                      {(t.pagoEstado === "Pendiente" || t.pagoEstado === "Coordinada") && !approvedPaymentIds.has(t.id_pago) && (
+                        <CancelButton
+                          idPago={t.id_pago}
+                          onCancel={handleCancel}
+                        />
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="admin-table-empty">Sin resultados</td>
+                <td colSpan={6} className="py-12 text-center text-text-muted">Sin resultados</td>
               </tr>
             )}
           </tbody>

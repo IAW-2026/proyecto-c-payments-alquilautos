@@ -3,10 +3,38 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // Protegemos el panel de administración y sus endpoints de API
 const isProtectedRoute = createRouteMatcher([
   "/admin(.*)",
-  "/api/admin(.*)"
+  "/api/admin(.*)",
+  "/api/pago(.*)"
 ]);
 
+// Las rutas públicas de test y las que pueden usar API Key como alternativa a Clerk
+const isTestRoute = createRouteMatcher(["/test(.*)"]);
+const isSellerRoute = createRouteMatcher(["/api/pago(.*)"]);
+const isAnalyticsRoute = createRouteMatcher(["/api/analytics(.*)"]);
+
 export default clerkMiddleware(async (auth, req) => {
+  // Páginas de test no requieren autenticación
+  if (isTestRoute(req)) {
+    return;
+  }
+
+  // GET /api/analytics puede autenticarse con x-api-key (sistema de analytics externo)
+  if (isAnalyticsRoute(req) && req.method === "GET") {
+    const apiKey = req.headers.get("x-api-key");
+    if (apiKey && apiKey === process.env.ANALYTICS_API_KEY) {
+      return;
+    }
+  }
+
+  // POST /api/pago puede autenticarse con x-api-key (seller app)
+  if (isSellerRoute(req) && req.method === "POST") {
+    const apiKey = req.headers.get("x-api-key");
+    if (apiKey && apiKey === process.env.SELLER_API_KEY) {
+      return; // Autenticado via API Key
+    }
+  }
+
+  // Para todo lo demás, incluyendo /api/pago sin API key válida, se requiere Clerk
   if (isProtectedRoute(req)) {
     await auth.protect();
   }

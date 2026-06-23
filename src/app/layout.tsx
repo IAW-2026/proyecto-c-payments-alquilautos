@@ -33,7 +33,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://clerk.accounts.dev" />
       </head>
-      <body>
+      <body className="font-sans antialiased">
         <ClerkProvider appearance={{ baseTheme: dark }} localization={esES}>
           {children}
         </ClerkProvider>

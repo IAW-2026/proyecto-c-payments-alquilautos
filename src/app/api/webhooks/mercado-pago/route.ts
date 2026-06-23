@@ -1,10 +1,23 @@
 import { NextResponse } from "next/server";
 import { Payment } from "mercadopago";
-import client from "@/lib/mercado-pago";
+import client, { verifyMercadoPagoSignature } from "@/lib/mercado-pago";
 import db from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
+    const rawBody = await request.text();
+
+    const xSignature = request.headers.get("x-signature");
+    const xRequestId = request.headers.get("x-request-id");
+
+    if (xSignature || xRequestId) {
+      const isValid = verifyMercadoPagoSignature(rawBody, xSignature, xRequestId);
+      if (!isValid) {
+        console.error("Firma de Mercado Pago inválida");
+        return NextResponse.json({ error: "Firma inválida" }, { status: 401 });
+      }
+    }
+
     // Mercado Pago envía notificaciones webhook o IPN.
     // Usualmente la URL recibe query params (id, topic) o un JSON en el body con (type, data.id)
     const url = new URL(request.url);
@@ -15,7 +28,7 @@ export async function POST(request: Request) {
 
     // 1. Tratamos de obtener el ID del pago del body (formato Webhook de MP)
     try {
-      const body = await request.json();
+      const body = JSON.parse(rawBody);
       if (body.type === "payment" && body.data?.id) {
         paymentId = body.data.id;
       } else if (body.action?.startsWith("payment.") && body.data?.id) {
@@ -75,8 +88,8 @@ export async function POST(request: Request) {
     // Solo se notifica cuando MP aprueba el pago.
     // La cancelación la dispara el admin desde la pantalla de transacciones.
     if (nuevoEstado === "Pagada") {
-      const { notifyApp } = await import("@/lib/mockWebhooks");
-      await notifyApp(pagoActualizado.id_reserva, "Pagada");
+      const { notificarSellerApp } = await import("@/lib/notificadorSeller");
+      await notificarSellerApp(pagoActualizado.id_reserva, "Pagada");
     }
 
     return new NextResponse("OK", { status: 200 });

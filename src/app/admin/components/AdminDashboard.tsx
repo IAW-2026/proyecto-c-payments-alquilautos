@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useUser, useClerk } from "@clerk/nextjs";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import AdminHeader from "./AdminHeader";
 import StatCard from "./StatCard";
+import SalesChart from "./SalesChart";
 import TransactionTable from "./TransactionTable";
-import { formatCurrency } from "@/lib/format";
-import { isAdminUser } from "@/lib/admin";
+import AdminSidebar from "./AdminSidebar";
+import { formatCurrency, type Moneda } from "@/lib/format";
+import { getCotizacion } from "../actions";
 import type { Transaction } from "@/types";
+
+type Vista = "clientes" | "analiticas";
+
+const monedas: Moneda[] = ["ARS", "USD", "EUR", "GBP"];
 
 interface AdminDashboardProps {
   transactions: Transaction[];
@@ -22,64 +25,21 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ transactions, stats }: AdminDashboardProps) {
-  const { isLoaded, isSignedIn, user } = useUser();
-  const { signOut } = useClerk();
   const router = useRouter();
-
+  const [activeView, setActiveView] = useState<Vista>("clientes");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [currency, setCurrency] = useState<Moneda>("ARS");
+  const [cotizaciones, setCotizaciones] = useState<Record<string, number>>({});
 
-  const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
-  const isAuthorized = isAdminUser(user);
+  useEffect(() => {
+    if (currency !== "ARS") {
+      getCotizacion().then(setCotizaciones);
+    }
+  }, [currency]);
 
-  // --- RETORNOS TEMPRANOS DE RENDER ---
-
-  // 4. Pantalla de carga mientras Clerk inicializa
-  if (!isLoaded) {
-    return (
-      <div className="admin-loading-screen">
-        <div className="admin-loading-container">
-          <div className="admin-loading-spinner" />
-          <span>Verificando credenciales...</span>
-        </div>
-      </div>
-    );
-  }
-
-  // 5. Pantalla de Acceso Denegado si no es administrador
-  if (!isSignedIn || !isAuthorized) {
-    return (
-      <div className="admin-denied-layout">
-        <Header />
-        <main className="admin-denied-main">
-          <div className="admin-denied-card">
-            <div className="admin-denied-icon-container">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-            </div>
-
-            <h2 className="admin-denied-title">Acceso Restringido</h2>
-
-            <p className="admin-denied-text">
-              Tu cuenta <strong>{email || "sin correo"}</strong> no tiene permisos de administrador en este panel de control.
-            </p>
-
-            <div className="admin-denied-actions">
-              <button 
-                onClick={() => signOut({ redirectUrl: "/" })}
-                className="admin-denied-btn-logout"
-              >
-                Cerrar Sesión e Iniciar con otra cuenta
-              </button>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const convertir = (monto: number) =>
+    currency === "ARS" ? monto : monto / (cotizaciones[currency] || 1);
 
   const approvedPaymentIds = new Set(
     transactions.filter((t) => t.estado === "Pagada").map((t) => t.id_pago)
@@ -103,42 +63,70 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
   });
 
   return (
-    <div className="admin-layout">
-      <Header />
+    <div className="min-h-dvh flex bg-bg">
+      <AdminSidebar activeView={activeView} onViewChange={setActiveView} />
 
-      <main className="admin-container">
-        <AdminHeader
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-        />
-
-        <div className="admin-stats-grid">
-          <StatCard
-            label="Ventas Totales"
-            value={formatCurrency(stats.totalVentas)}
-            sub="Monto acumulado en pesos"
-          />
-          <StatCard
-            label="Pagos Realizados"
-            value={stats.cantidadPagos}
-            sub="Transacciones registradas"
-          />
-          <StatCard
-            label="Tasa de Aprobación"
-            value={`${((stats.pagosAprobados / (stats.cantidadPagos || 1)) * 100).toFixed(1)}%`}
-            sub={`${stats.pagosAprobados} de ${stats.cantidadPagos} aprobadas`}
-          />
-        </div>
-
-        <TransactionTable
-          transactions={filteredTransactions}
-          approvedPaymentIds={approvedPaymentIds}
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-          onDeleteTransaction={() => router.refresh()}
-        />
-      </main>
-      <Footer />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 py-8 px-8 max-lg:py-6 max-lg:px-6 max-md:py-4 max-md:px-4 overflow-y-auto">
+          {activeView === "clientes" ? (
+            <div className="space-y-6">
+              <AdminHeader
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+              />
+              <TransactionTable
+                transactions={filteredTransactions}
+                approvedPaymentIds={approvedPaymentIds}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                onDeleteTransaction={() => router.refresh()}
+              />
+            </div>
+          ) : (
+            <div className="space-y-6 max-w-4xl mx-auto">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h1 className="text-[2rem] font-bold text-text-primary max-lg:text-[1.75rem] max-md:text-[1.5rem] max-sm:text-lg">Analíticas</h1>
+                  <p className="text-sm text-text-secondary max-sm:text-xs">Resumen de ingresos y rendimiento.</p>
+                </div>
+                <div className="flex gap-1 bg-bg rounded-lg p-1">
+                  {monedas.map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => setCurrency(m)}
+                      className={`py-1.5 px-4 rounded-md text-sm font-medium cursor-pointer transition-colors ${
+                        currency === m
+                          ? "bg-surface text-text-primary shadow-sm"
+                          : "text-text-muted hover:text-text-secondary"
+                      }`}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6 max-lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] max-md:grid-cols-1 max-md:gap-4">
+                <StatCard
+                  label="Ventas Totales"
+                  value={formatCurrency(convertir(stats.totalVentas), currency)}
+                  sub={currency === "ARS" ? "Monto acumulado en pesos" : "Cotización oficial (Frankfurter)"}
+                />
+                <StatCard
+                  label="Pagos Realizados"
+                  value={stats.cantidadPagos}
+                  sub="Transacciones registradas"
+                />
+                <StatCard
+                  label="Tasa de Aprobación"
+                  value={`${((stats.pagosAprobados / (stats.cantidadPagos || 1)) * 100).toFixed(1)}%`}
+                  sub={`${stats.pagosAprobados} de ${stats.cantidadPagos} aprobadas`}
+                />
+              </div>
+              <SalesChart currency={currency} cotizacion={cotizaciones[currency] || 1} />
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
