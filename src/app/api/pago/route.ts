@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { mpPreference } from "@/lib/mercado-pago";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://payments-app.com";
-
 export async function POST(request: Request) {
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get("host")}`;
+
     const body = await request.json();
     const { id_reserva, id_alquilador, id_propietario, monto_pagar } = body;
 
@@ -37,11 +37,11 @@ export async function POST(request: Request) {
           },
         ],
         external_reference: String(nuevoPago.id_pago),
-        notification_url: `${BASE_URL}/api/webhooks/mercado-pago`,
+        notification_url: `${baseUrl}/api/webhooks/mercado-pago`,
         back_urls: {
-          success: `${BASE_URL}/`,
-          failure: `${BASE_URL}/`,
-          pending: `${BASE_URL}/`,
+          success: `${baseUrl}/`,
+          failure: `${baseUrl}/`,
+          pending: `${baseUrl}/`,
         },
         auto_return: "approved",
       },
