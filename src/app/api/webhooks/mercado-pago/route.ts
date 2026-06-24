@@ -7,43 +7,56 @@ export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
 
+    // Verificación de firma no bloqueante — loguea warning si falla pero procesa igual
     const xSignature = request.headers.get("x-signature");
     const xRequestId = request.headers.get("x-request-id");
-
     if (xSignature || xRequestId) {
       const isValid = verifyMercadoPagoSignature(rawBody, xSignature, xRequestId);
       if (!isValid) {
-        console.error("Firma de Mercado Pago inválida");
-        return NextResponse.json({ error: "Firma inválida" }, { status: 401 });
+        console.warn("Firma de Mercado Pago inválida — se procesa igual");
       }
     }
 
-    // Mercado Pago envía notificaciones webhook o IPN.
-    // Usualmente la URL recibe query params (id, topic) o un JSON en el body con (type, data.id)
+    // Mercado Pago envía notificaciones webhook o IPN en varios formatos.
     const url = new URL(request.url);
     const queryId = url.searchParams.get("id");
     const queryTopic = url.searchParams.get("topic");
+    const queryDataId = url.searchParams.get("data.id");
 
     let paymentId: string | null = null;
 
-    // 1. Tratamos de obtener el ID del pago del body (formato Webhook de MP)
     try {
       const body = JSON.parse(rawBody);
+      // Formato 1: { type: "payment", data: { id } }
       if (body.type === "payment" && body.data?.id) {
-        paymentId = body.data.id;
-      } else if (body.action?.startsWith("payment.") && body.data?.id) {
-        paymentId = body.data.id;
+        paymentId = String(body.data.id);
+      }
+      // Formato 2: { action: "payment.created", data: { id } }
+      else if (body.action?.startsWith("payment.") && body.data?.id) {
+        paymentId = String(body.data.id);
+      }
+      // Formato 3: { id: 123 } (ID directo en el body)
+      else if (body.id && body.topic === "payment") {
+        paymentId = String(body.id);
+      }
+      // Formato 4: { data: { id } } sin type/action
+      else if (body.data?.id) {
+        paymentId = String(body.data.id);
       }
     } catch {
-      // Body no es JSON válido o no está presente, intentamos con query params (formato IPN antiguo)
+      // Body no es JSON, probamos con query params
       if (queryTopic === "payment" && queryId) {
         paymentId = queryId;
+      } else if (queryDataId) {
+        paymentId = queryDataId;
       }
     }
 
+    console.log(`[WEBHOOK] Notificación recibida. paymentId: ${paymentId}, topic: ${queryTopic}, xSignature: ${!!xSignature}`);
+
     if (!paymentId) {
-      console.log("No se detectó un ID de pago en la notificación.");
-      return new NextResponse("OK", { status: 200 }); // Siempre devolver 200 a MP rápidamente
+      console.log("[WEBHOOK] No se detectó un ID de pago en la notificación.");
+      return new NextResponse("OK", { status: 200 });
     }
 
     // 2. Consultar el pago en Mercado Pago usando el SDK
