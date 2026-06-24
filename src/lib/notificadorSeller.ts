@@ -1,11 +1,12 @@
 import { formatDateTime } from "@/lib/format";
-import { auth } from "@clerk/nextjs/server";
 
 const SELLER_APP_URL = process.env.SELLER_APP_URL;
 
 export async function notificarSellerApp(
   id_reserva: number | string,
-  estado: "Cancelada" | "Pagada"
+  estado: "Cancelada" | "Pagada",
+  token: string
+
 ) {
   if (!SELLER_APP_URL) {
     console.warn("[NOTIFICADOR] SELLER_APP_URL no configurada. Saltando notificación.");
@@ -19,9 +20,6 @@ export async function notificarSellerApp(
     timestamp: formatDateTime(new Date()),
     id_reserva: String(id_reserva),
   };
-
-  const { getToken } = await auth();
-  const token = await getToken();
 
   try {
     const res = await fetch(targetUrl, {
