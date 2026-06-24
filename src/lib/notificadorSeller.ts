@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/lib/format";
+import { auth } from "@clerk/nextjs/server";
 
 const SELLER_APP_URL = process.env.SELLER_APP_URL;
 
@@ -19,10 +20,15 @@ export async function notificarSellerApp(
     id_reserva: String(id_reserva),
   };
 
+  const { getToken } = await auth();
+  const token = await getToken();
+
   try {
     const res = await fetch(targetUrl, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" ,
+        Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify(payload),
     });
 
