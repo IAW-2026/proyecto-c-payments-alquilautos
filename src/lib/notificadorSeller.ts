@@ -17,7 +17,7 @@ export async function notificarSellerApp(
     return;
   }
 
-  const targetUrl = `${SELLER_APP_URL.replace(/\/$/, "")}api/reserva/${id_reserva}`;
+  const targetUrl = `${SELLER_APP_URL.replace(/\/$/, "")}/api/reserva/${id_reserva}`;
 
   const payload = {
     estado,
