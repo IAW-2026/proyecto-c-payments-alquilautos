@@ -59,10 +59,10 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id_reserva: Number(id_reserva),
+          id_reserva: String(id_reserva),
           monto_pagar: parseFloat(testMonto),
-          id_alquilador: Number(testAlquilador) || 0,
-          id_propietario: Number(testPropietario) || 0,
+          id_alquilador: String(testAlquilador) || "",
+          id_propietario: String(testPropietario) || "",
         }),
       });
 

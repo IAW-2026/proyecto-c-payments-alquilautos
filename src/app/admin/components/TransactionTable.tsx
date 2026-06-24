@@ -10,7 +10,6 @@ import DownloadReceiptButton from "@/components/DownloadReceiptButton";
 
 interface TransactionTableProps {
   transactions: Transaction[];
-  approvedPaymentIds: Set<number>;
   selectedDate: string;
   onDateChange: (date: string) => void;
   onDeleteTransaction: (id_pago: number) => void;
@@ -26,7 +25,7 @@ function getStatusClasses(estado: string) {
   return map[estado] || "bg-gray-100 text-gray-600";
 }
 
-export default function TransactionTable({ transactions, approvedPaymentIds, selectedDate, onDateChange, onDeleteTransaction }: TransactionTableProps) {
+export default function TransactionTable({ transactions, selectedDate, onDateChange, onDeleteTransaction }: TransactionTableProps) {
   const handleCancel = async (idPago: number) => {
     await cancelTransaction(String(idPago));
     onDeleteTransaction(idPago);
@@ -93,7 +92,7 @@ export default function TransactionTable({ transactions, approvedPaymentIds, sel
                           }}
                         />
                       )}
-                      {(t.pagoEstado === "Pendiente" || t.pagoEstado === "Coordinada") && !approvedPaymentIds.has(t.id_pago) && (
+                      {(t.pagoEstado === "Pendiente" || t.pagoEstado === "Coordinada") && (
                         <CancelButton
                           idPago={t.id_pago}
                           onCancel={handleCancel}

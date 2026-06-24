@@ -41,10 +41,6 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
   const convertir = (monto: number) =>
     currency === "ARS" ? monto : monto / (cotizaciones[currency] || 1);
 
-  const approvedPaymentIds = new Set(
-    transactions.filter((t) => t.estado === "Pagada").map((t) => t.id_pago)
-  );
-
   const filteredTransactions = transactions.filter((t) => {
     const search = searchTerm.toLowerCase();
     const matchesSearch =
@@ -76,7 +72,6 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
               />
               <TransactionTable
                 transactions={filteredTransactions}
-                approvedPaymentIds={approvedPaymentIds}
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
                 onDeleteTransaction={() => router.refresh()}
