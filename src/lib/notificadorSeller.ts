@@ -7,6 +7,8 @@ export async function notificarSellerApp(
   estado: "Cancelada" | "Pagada",
   token: string | null
 ) {
+  console.log("[NOTIFICADOR] notificarSellerApp llamado con:", { id_reserva, estado, token: token ? `${token.slice(0, 20)}...` : null, SELLER_APP_URL });
+
   if (!SELLER_APP_URL) {
     console.warn("[NOTIFICADOR] SELLER_APP_URL no configurada. Saltando notificación.");
     return;
@@ -24,6 +26,8 @@ export async function notificarSellerApp(
     timestamp: formatDateTime(new Date()),
     id_reserva: String(id_reserva),
   };
+
+  console.log("[NOTIFICADOR] Enviando a seller app:", { targetUrl, payload });
 
   try {
     const res = await fetch(targetUrl, {
