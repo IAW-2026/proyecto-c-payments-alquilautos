@@ -21,6 +21,7 @@ function getStatusClasses(estado: string) {
     Pendiente: "bg-[#fef9c3] text-[#a16207]",
     Cancelada: "bg-[#fee2e2] text-[#dc2626]",
     Coordinada: "bg-[#dbeafe] text-[#1d4ed8]",
+    Coordinado: "bg-[#dbeafe] text-[#1d4ed8]",
   };
   return map[estado] || "bg-gray-100 text-gray-600";
 }
@@ -92,7 +93,7 @@ export default function TransactionTable({ transactions, selectedDate, onDateCha
                           }}
                         />
                       )}
-                      {(t.pagoEstado === "Pendiente" || t.pagoEstado === "Coordinada") && (
+                      {t.pagoEstado !== "Pagada" && t.pagoEstado !== "Cancelada" && (
                         <CancelButton
                           idPago={t.id_pago}
                           onCancel={handleCancel}

@@ -73,7 +73,7 @@ export async function cancelTransaction(id: string) {
     throw new Error("Transacción no encontrada");
   }
 
-  if (pago.estado !== "Pendiente" && pago.estado !== "Coordinada") {
+  if (pago.estado !== "Pendiente" && pago.estado !== "Coordinada" && pago.estado !== "Coordinado") {
     throw new Error("Solo se pueden cancelar transacciones pendientes o coordinadas");
   }
 
