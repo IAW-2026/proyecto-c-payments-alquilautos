@@ -2,7 +2,6 @@
 
 import { Transaction } from "@/types";
 import { formatCurrency } from "@/lib/format";
-import { cancelTransaction } from "../actions";
 import ExportPDFButton from "@/components/ExportPDFButton";
 import ExportExcelButton from "@/components/ExportExcelButton";
 import CancelButton from "@/components/CancelButton";
@@ -28,7 +27,15 @@ function getStatusClasses(estado: string) {
 
 export default function TransactionTable({ transactions, selectedDate, onDateChange, onDeleteTransaction }: TransactionTableProps) {
   const handleCancel = async (idPago: number) => {
-    await cancelTransaction(String(idPago));
+    const res = await fetch("/api/admin/cancel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id_pago: idPago }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Error al cancelar");
+    }
     onDeleteTransaction(idPago);
   };
 

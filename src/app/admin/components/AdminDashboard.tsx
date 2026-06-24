@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import AdminHeader from "./AdminHeader";
 import StatCard from "./StatCard";
@@ -74,7 +74,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
                 transactions={filteredTransactions}
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
-                onDeleteTransaction={() => window.location.reload()}
+                onDeleteTransaction={useCallback(() => { router.refresh(); }, [router])}
               />
             </div>
           ) : (
