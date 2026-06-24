@@ -8,7 +8,7 @@ datasource db {
 
 model Pago {
   id_pago             Int                   @id @default(autoincrement())
-  id_reserva          Int                   @unique
+  id_reserva          String                   @unique
   id_alquilador       Int
   id_propietario      Int
   monto_pagar         Float
