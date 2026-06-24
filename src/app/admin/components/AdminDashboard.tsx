@@ -74,7 +74,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
                 transactions={filteredTransactions}
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
-                onDeleteTransaction={() => router.refresh()}
+                onDeleteTransaction={() => window.location.reload()}
               />
             </div>
           ) : (

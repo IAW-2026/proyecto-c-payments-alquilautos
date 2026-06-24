@@ -5,6 +5,8 @@ import AdminDashboard from "./components/AdminDashboard";
 import AdminGuard from "./components/AdminGuard";
 import { isAdminUser } from "@/lib/admin";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPanel() {
   const user = await currentUser();
 
