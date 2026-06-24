@@ -5,15 +5,19 @@ const SELLER_APP_URL = process.env.SELLER_APP_URL;
 export async function notificarSellerApp(
   id_reserva: number | string,
   estado: "Cancelada" | "Pagada",
-  token: string
-
+  token: string | null
 ) {
   if (!SELLER_APP_URL) {
     console.warn("[NOTIFICADOR] SELLER_APP_URL no configurada. Saltando notificación.");
     return;
   }
 
-  const targetUrl = `${SELLER_APP_URL}/api/reserva/${id_reserva}`;
+  if (!token) {
+    console.error("[NOTIFICADOR] No hay token de autenticación disponible. Saltando notificación.");
+    return;
+  }
+
+  const targetUrl = `${SELLER_APP_URL.replace(/\/$/, "")}/reserva/${id_reserva}`;
 
   const payload = {
     estado,
@@ -24,8 +28,9 @@ export async function notificarSellerApp(
   try {
     const res = await fetch(targetUrl, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" ,
-        Authorization: `Bearer ${token}`
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     });

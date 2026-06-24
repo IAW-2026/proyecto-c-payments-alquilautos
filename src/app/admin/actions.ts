@@ -1,12 +1,11 @@
 "use server";
 
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { notificarSellerApp } from "@/lib/notificadorSeller";
 import { isAdminUser, type ClerkUserForRoleCheck } from "@/lib/admin";
 import { formatDateTime } from "@/lib/format";
-import { auth } from "@clerk/nextjs/server";
 
 function isAdmin(user: Awaited<ReturnType<typeof currentUser>>): boolean {
   return isAdminUser(user as ClerkUserForRoleCheck);
@@ -90,13 +89,9 @@ export async function cancelTransaction(id: string) {
       descripcion: "Transacción cancelada por administrador",
     },
   });
-    const { getToken } = await auth();
-    const token = await getToken();
 
-    if (!token){
-        return Response.json({ error: "sin token" });
-    }
-
+  const { getToken } = await auth();
+  const token = await getToken();
   await notificarSellerApp(pago.id_reserva, "Cancelada", token);
 
   revalidatePath("/admin");

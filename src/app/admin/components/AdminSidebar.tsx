@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 
 type Vista = "clientes" | "analiticas";
@@ -16,15 +16,16 @@ const navItems: { key: Vista; label: string; icon: string }[] = [
 ];
 
 export default function AdminSidebar({ activeView, onViewChange }: AdminSidebarProps) {
-  const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("theme");
-    if (stored === "light" || stored === "dark") {
-      setDark(stored === "dark");
-      document.documentElement.classList.toggle("dark", stored === "dark");
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("theme");
+      if (stored === "light" || stored === "dark") {
+        document.documentElement.classList.toggle("dark", stored === "dark");
+        return stored === "dark";
+      }
     }
-  }, []);
+    return false;
+  });
 
   const toggleTheme = () => {
     const next = !dark;

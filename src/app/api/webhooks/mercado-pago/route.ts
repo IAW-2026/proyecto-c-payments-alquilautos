@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { Payment } from "mercadopago";
 import client, { verifyMercadoPagoSignature } from "@/lib/mercado-pago";
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 
 export async function POST(request: Request) {
   try {
@@ -102,15 +101,10 @@ export async function POST(request: Request) {
     // Solo se notifica cuando MP aprueba el pago.
     // La cancelación la dispara el admin desde la pantalla de transacciones.
     if (nuevoEstado === "Pagada") {
-      const { getToken } = await auth();
-      const token = await getToken();
-      
-      if (!token){
-        return Response.json({ error: "sin token" });
-      }
-
-        const { notificarSellerApp } = await import("@/lib/notificadorSeller");
-        await notificarSellerApp(pagoActualizado.id_reserva, "Pagada", token);
+      const { notificarSellerApp } = await import("@/lib/notificadorSeller");
+      const { getServiceAccountToken } = await import("@/lib/clerk-service-account");
+      const token = await getServiceAccountToken();
+      await notificarSellerApp(pagoActualizado.id_reserva, "Pagada", token);
     }
 
     return new NextResponse("OK", { status: 200 });

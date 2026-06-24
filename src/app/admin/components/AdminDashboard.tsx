@@ -41,6 +41,8 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
   const convertir = (monto: number) =>
     currency === "ARS" ? monto : monto / (cotizaciones[currency] || 1);
 
+  const handleDeleteTransaction = useCallback(() => { router.refresh(); }, [router]);
+
   const filteredTransactions = transactions.filter((t) => {
     const search = searchTerm.toLowerCase();
     const matchesSearch =
@@ -74,7 +76,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
                 transactions={filteredTransactions}
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
-                onDeleteTransaction={useCallback(() => { router.refresh(); }, [router])}
+                onDeleteTransaction={handleDeleteTransaction}
               />
             </div>
           ) : (

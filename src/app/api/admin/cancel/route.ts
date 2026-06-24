@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { currentUser, Token } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { isAdminUser } from "@/lib/admin";
 import db from "@/lib/db";
 import { notificarSellerApp } from "@/lib/notificadorSeller";
 import { revalidatePath } from "next/cache";
-import { auth } from "@clerk/nextjs/server";
 
 export async function POST(request: Request) {
   try {
@@ -43,11 +42,6 @@ export async function POST(request: Request) {
 
     const { getToken } = await auth();
     const token = await getToken();
-
-    if (!token){
-        return Response.json({ error: "sin token" });
-    }
-
     await notificarSellerApp(pago.id_reserva, "Cancelada", token);
 
     revalidatePath("/admin");
