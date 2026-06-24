@@ -17,6 +17,8 @@ export default function CancelButton({ idPago, onCancel }: CancelButtonProps) {
     setLoading(true);
     try {
       await onCancel(idPago);
+    } catch (e) {
+      alert(typeof e === "object" && e !== null && "message" in e ? String((e as Error).message) : "Error al cancelar la transacción");
     } finally {
       setLoading(false);
     }
