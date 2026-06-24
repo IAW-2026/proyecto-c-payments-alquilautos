@@ -3,7 +3,7 @@
 interface DownloadReceiptButtonProps {
   transaction: {
     id_pago: number;
-    id_reserva: number;
+    id_reserva: string;
     cliente: string;
     monto: number;
     fecha: string;

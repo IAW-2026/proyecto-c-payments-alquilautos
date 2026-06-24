@@ -16,7 +16,7 @@ export async function notificarSellerApp(
   const payload = {
     estado,
     timestamp: formatDateTime(new Date()),
-    id_reserva: Number(id_reserva),
+    id_reserva: String(id_reserva),
   };
 
   try {

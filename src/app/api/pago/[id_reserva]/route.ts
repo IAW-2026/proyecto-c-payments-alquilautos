@@ -15,7 +15,7 @@ export async function PATCH(
     }
 
     const pago = await db.pago.findUnique({
-      where: { id_reserva: Number(id_reserva) },
+      where: { id_reserva: id_reserva },
     });
 
     if (!pago) {

@@ -16,9 +16,9 @@ export async function POST(request: Request) {
     // Crear el pago en la base de datos siguiendo el esquema real
     const nuevoPago = await db.pago.create({
       data: {
-        id_reserva: Number(id_reserva),
-        id_alquilador: Number(id_alquilador || 0),
-        id_propietario: Number(id_propietario || 0),
+        id_reserva: String(id_reserva),
+        id_alquilador: String(id_alquilador || ""),
+        id_propietario: String(id_propietario || ""),
         monto_pagar: parseFloat(monto_pagar),
         estado: "Coordinada",
       },

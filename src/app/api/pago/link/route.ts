@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     }
 
     const pago = await db.pago.findUnique({
-      where: { id_reserva: Number(id_reserva) },
+      where: { id_reserva: id_reserva },
       select: { link_pago: true },
     });
 
