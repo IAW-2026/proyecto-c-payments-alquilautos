@@ -7,6 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "AlquilAutos — Pagos",
   description: "Plataforma de alquiler de vehículos entre particulares",
+  icons: "/logo.jpeg",
 };
 
 export default function RootLayout({

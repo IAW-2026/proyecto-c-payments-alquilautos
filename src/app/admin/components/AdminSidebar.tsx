@@ -39,9 +39,7 @@ export default function AdminSidebar({ activeView, onViewChange }: AdminSidebarP
       {/* Sidebar desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-surface border-r border-border min-h-dvh">
         <div className="flex items-center gap-3 py-6 px-6 border-b border-border-light">
-          <div className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center text-white font-bold text-sm">
-            AA
-          </div>
+          <img src="/logo.jpeg" alt="AlquilAutos" className="w-9 h-9 rounded-xl" />
           <div>
             <p className="font-semibold text-sm text-text-primary">AlquilAutos</p>
             <p className="text-[0.7rem] text-text-muted">Panel Admin</p>
