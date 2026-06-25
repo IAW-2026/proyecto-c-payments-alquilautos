@@ -65,7 +65,7 @@ export default function AdminDashboard({ transactions, stats }: AdminDashboardPr
       <AdminSidebar activeView={activeView} onViewChange={setActiveView} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 py-8 px-8 max-lg:py-6 max-lg:px-6 max-md:py-4 max-md:px-4 overflow-y-auto">
+        <main className="flex-1 py-8 px-8 max-lg:py-6 max-lg:px-6 max-md:py-4 max-md:px-4 max-md:pb-20 overflow-y-auto">
           {activeView === "clientes" ? (
             <div className="space-y-6">
               <AdminHeader
